@@ -52,7 +52,7 @@ function loadchal(id, update) {
         $('.chal-name').val(obj.name);
         $('.chal-desc-editor').val(obj.description);
         $('.chal-value').val(obj.value);
-        $('.chal-hold').val(obj.hold);
+        $('.chal-buildingId').val(obj.buildingId);
         $('.chal-regex').val(obj.regex);
         $('.chal-hash').val(obj.hash);
         $('.chal-king').val(obj.king);

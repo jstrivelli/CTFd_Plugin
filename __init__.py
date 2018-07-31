@@ -35,12 +35,14 @@ class SmartCity(challenges.BaseChallenge):
 
 	templates = { # Handlebars template used for each aspect of challenge editing and viewing
                         'create' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-create.njk',
-        		'update' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-update.njk'
+        		'update' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-update.njk',
+			'modal'  : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-model.njk',
 	}
 
         scripts = {
                         'create' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-create.js',
-			'update' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-update.js'
+			'update' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-update.js',
+			'modal'  : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-modal.js',
         }
 	
 	@staticmethod
@@ -54,10 +56,11 @@ class SmartCity(challenges.BaseChallenge):
 	
 		chal = SmartCityChallenge(
 			name= request.form['name'],
+			category = request.form['category'],
 			description = request.form['description'],
 			value = request.form['value'],
 			buildingId = request.form['buildingId'],
-			type=request.form['type']
+			type=request.form['chaltype']
 		
 		)
                 
@@ -87,7 +90,7 @@ class SmartCity(challenges.BaseChallenge):
 			'value': challenge.value,
 			'description': challenge.description,
 			'category': challenge.category,
-			'hidden': challenege.hidden,
+			'hidden': challenge.hidden,
 			'max_attempts': challenge.max_attempts,
 			'buildingId': challenge.buildingId,
 			'type': challenge.type,
