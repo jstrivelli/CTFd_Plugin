@@ -7,11 +7,26 @@ from CTFd.plugins import challenges, register_plugin_assets_directory
 from CTFd import utils, CTFdFlask
 from flask import session
 from CTFd.plugins.keys import get_key_class
-
+from  passlib.hash import bcrypt_sha256
 
 
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
+
+class SmartCityTeam(Teams):
+	_mapper_args__ = {'polymorphic_identity': 'smart_city'}
+	id = db.Column(None, db.ForeignKey('teams.id'), primary_key=True)
+	school = db.Column(db.String(128))
+	color = db.Column(db.String(123))
+	image = db.Column(db.Integer)
+	def __init__(self, name, email, password, school, color, image):
+		self.name = name
+		self.email = email
+		self.password = bcrypt_sha256.encrypt(str(password))
+		self.school = school
+		self.color = color
+		self.image = image 
+
 
 class SmartCityChallenge(Challenges):
 	__mapper_args__ = {'polymorphic_identity': 'smart_city'}
@@ -242,4 +257,5 @@ def load(app):
         #return render_template('page.html', content="<h1>Challenges are currently closed</h1>")
 
     # The format used by the view_functions dictionary is blueprint.view_function_name
+
     #app.view_functions['challenges.challenges_view'] = view_challenges
