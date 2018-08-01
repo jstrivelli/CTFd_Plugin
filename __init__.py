@@ -36,7 +36,7 @@ class SmartCity(challenges.BaseChallenge):
 	templates = { # Handlebars template used for each aspect of challenge editing and viewing
                         'create' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-create.njk',
         		'update' : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-update.njk',
-			'modal'  : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-model.njk',
+			'modal'  : '/plugins/CTFd_SmartCity/assets/smartcity-challenge-modal.njk',
 	}
 
         scripts = {
