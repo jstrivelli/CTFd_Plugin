@@ -151,10 +151,8 @@ class SmartCity(challenges.BaseChallenge):
         	:param request: The request the user submitted
         	:return: (boolean, string)
         	"""
-		print("hello world")
         	provided_key = request.form['key'].strip()
-        	chal_keys = Keys.query.filter_by(chal=chal.id).all()
-		print(chal_keys) 
+        	chal_keys = Keys.query.filter_by(chal=chal.id).all() 
         	for chal_key in chal_keys:
 			print(chal_key)
             		if get_key_class(chal_key.type).compare(chal_key, provided_key):
@@ -206,6 +204,29 @@ class SmartCity(challenges.BaseChallenge):
         	db.session.commit()
         	db.session.close()
 
+
+	@staticmethod
+	def update(challenge, request):
+		"""
+        	This method is used to update the information associated with a challenge. This should be kept strictly to the
+       		 Challenges table and any child tables.
+        	:param challenge:
+        	:param request:
+        	:return:
+        	"""
+		challenge = SmartCityChallenge.query.filter_by(id=challenge.id).first()
+		   
+		challenge.name = request.form['name']
+		challenge.description = request.form['description']
+		challenge.value = int(request.form.get('value', 0)) if request.form.get('value', 0) else 0
+        	challenge.max_attempts = int(request.form.get('max_attempts', 0)) if request.form.get('max_attempts', 0) else 0
+        	challenge.category = request.form['category']
+		challenge.hidden = 'hidden' in request.form
+
+		challenge.buildingId = request.form['buildingId']
+
+		db.session.commit()
+		db.session.close()
 
 def load(app):
     """load overrides for smart_city to work properly"""
