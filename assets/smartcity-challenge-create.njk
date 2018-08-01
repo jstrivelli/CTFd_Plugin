@@ -44,31 +44,78 @@
 		<label for="building">Building ID
 			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is how many points are rewarded for taking control of the hill."></i>
 		</label>
-		<input type="number" class="form-control chal-buildingId" name="buildingId" placeholder="Enter value" required>
+		<select type="number" class="form-control chal-buildingId" name="buildingId" placeholder="Enter value" required> <option value="volvo">Volvo</option>
+   <option value="saab">Saab</option>
+   <option value="opel">Opel</option>
+   <option value="audi">Audi</option></select>
 	</div>
-	<div class="form-group">
-		<label for="flag">Flag
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is how many points are rewarded for taking control of the hill."></i>
-		</label>
-		<input type="number" class="form-control chal-value" name="value" placeholder="Enter value" required>
-	</div>
-	<div class="form-check">
-		<div class="checkbox">
-			<label class="form-check-label">
-				<input class="form-check-input" name="hidden" type="checkbox">
-				Hide challenge on creation
-			</label>
+	
+		<div class="row">
+			<div class="form-group">
+				<div class="col-md-8">
+					<label for="key">Key
+						<i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="This is the flag/solution for the challenge."></i>
+					</label>
+					<input type="text" class="form-control" name="key" placeholder="Enter key">
+				</div>
+				<div class="form-vertical">
+					<div class="col-md-2">
+						<div class="radio">
+							<label>
+								<input type="radio" name="key_type[0]" value="static" checked>
+								Static
+							</label>
+						</div>
+						<div class="radio">
+							<label>
+								<input type="radio" name="key_type[0]" value="regex">
+								Regex
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
 
-	<div class="form-group">
-		<label>Upload Word Lists
-			<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="Word lists will be used when creating more simpler passwords"></i>
-		</label>
-		<input class="form-control-file" type="file" name="files[]" multiple="multiple">
-		<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
-	</div>
+		<div class="row">
+			<div class="form-group">
+				<div class="col-md-9">
+					<div class="checkbox">
+						<label>
+							<input name="hidden" type="checkbox">
+							Hide challenge on creation
+						</label>
+					</div>
+				</div>
+			</div>
+		</div>
 
+		<div class="form-group">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" id="solve-attempts-checkbox">
+					Limit amount of solve attempts
+				</label>
+			</div>
+			<div id="solve-attempts-input" style="display: none;">
+				<label for="max_attempts">Maximum Attempts
+					<i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="How many attempts should a user have for this challenge? For unlimited attempts, use the value 0"></i>
+				</label>
+				<input class="form-control" id='max_attempts' name='max_attempts' type='number' placeholder="0">
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="form-group">
+				<div class="col-md-9">
+					<label>Upload Challenge Files
+						<i class="fa fa-question-circle gray-text" data-toggle="tooltip" data-placement="right" title="Challenges files are provided to users for download alongside your challenge description"></i>
+					</label>
+					<sub class="help-block">Attach multiple files using Control+Click or Cmd+Click.</sub>
+					<input type="file" name="files[]" multiple="multiple">
+				</div>
+			</div>
+</div>
 	<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
 	<input type="hidden" value="smart_city" name="chaltype" id="chaltype">
 
