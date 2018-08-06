@@ -1,31 +1,40 @@
+import os
+import logging
+import time
 from flask import render_template
-from CTFd.utils import admins_only, is_admin
+from CTFd.utils import admins_only, is_admin, ratelimit, override_template
 from CTFd.models import db, Challenges, Keys, Awards, Solves, Files, Tags, Teams, WrongKeys
 from CTFd import utils
 from logging import getLogger, basicConfig,DEBUG,ERROR
 from CTFd.plugins import challenges, register_plugin_assets_directory
 from CTFd import utils, CTFdFlask
-from flask import session
+from flask import session, Blueprint, request, redirect
+from flask import current_app as app, request, render_template, url_for
 from CTFd.plugins.keys import get_key_class
 from  passlib.hash import bcrypt_sha256
+from werkzeug.routing import Rule
 
-
+auth = Blueprint('auth', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
+#app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 
 class SmartCityTeam(Teams):
 	_mapper_args__ = {'polymorphic_identity': 'smart_city'}
+	#name = db.Column(None, db.ForeignKey('teams.name'), primary_key=True)
 	id = db.Column(None, db.ForeignKey('teams.id'), primary_key=True)
+	#name = db.Column(db.String(128), unique=True)
+	#email = db.Column(db.String(124), unique=True)
 	school = db.Column(db.String(128))
 	color = db.Column(db.String(123))
 	image = db.Column(db.Integer)
-	def __init__(self, name, email, password, school, color, image):
-		self.name = name
-		self.email = email
-		self.password = bcrypt_sha256.encrypt(str(password))
+	def __init__(self,school, color, image):
+		#self.name = name
+		#self.email = email
 		self.school = school
 		self.color = color
 		self.image = image 
+
 
 
 class SmartCityChallenge(Challenges):
@@ -243,13 +252,107 @@ class SmartCity(challenges.BaseChallenge):
 		db.session.commit()
 		db.session.close()
 
+@auth.route('register', methods=['POST', 'GET'])
+@ratelimit(method="POST", limit=10, interval=5)
+def register_smart():
+    logger = logging.getLogger('regs')
+    if not utils.can_register():
+        return redirect(url_for('auth.login'))
+    if request.method == 'POST':
+        errors = []
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+	color = request.form['color']
+
+
+        name_len = len(name) == 0
+        names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
+        emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
+        smart_colors = SmartCityTeam.query.add_columns('color').filter_by(color=color).first()
+	#challenge = SmartCityChallenge.query.filter_by(id=challenge.id).first()
+	print(smart_colors)
+	pass_short = len(password) == 0
+        pass_long = len(password) > 128
+        valid_email = utils.check_email_format(request.form['email'])
+        team_name_email_check = utils.check_email_format(name)
+
+
+        if not valid_email:
+            errors.append("Please enter a valid ieeeeeeemail address")
+        if names:
+            errors.append('That team name is already taken')
+        if team_name_email_check is True:
+            errors.append('Your team name cannot be an email address')
+        if emails:
+            errors.append('That email has already been used')
+        if pass_short:
+            errors.append('Pick a longer password')
+        if pass_long:
+            errors.append('Pick a shorter password')
+        if name_len:
+            errors.append('Pick a longer team name')
+	if smart_colors:
+            errors.append('That color is already taken')
+
+        if len(errors) > 0:
+            return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
+        else:
+            with app.app_context():
+                team = Teams(name, email.lower(), password)
+                db.session.add(team)
+                db.session.commit()
+                db.session.flush()
+		
+		smart_team = SmartCityTeam('rutgers', color, 'hello')
+		db.session.add(smart_team)
+		db.session.commit()
+		db.session.flush()
+
+                session['username'] = team.name
+                session['id'] = team.id
+                session['admin'] = team.admin
+                session['nonce'] = utils.sha512(os.urandom(10))
+
+                if utils.can_send_mail() and utils.get_config('verify_emails'):  # Confirming users is enabled and we can send email.
+                    logger = logging.getLogger('regs')
+                    logger.warn("[{date}] {ip} - {username} registered (UNCONFIRMED) with {email}".format(
+                        date=time.strftime("%m/%d/%Y %X"),
+                        ip=utils.get_ip(),
+                        username=request.form['name'].encode('utf-8'),
+                        email=request.form['email'].encode('utf-8')
+                    ))
+                    utils.verify_email(team.email)
+                    db.session.close()
+                    return redirect(url_for('auth.confirm_user'))
+                else:  # Don't care about confirming users
+                    if utils.can_send_mail():  # We want to notify the user that they have registered.
+                        utils.sendmail(request.form['email'], "You've successfully registered for {}".format(utils.get_config('ctf_name')))
+
+        logger.warn("[{date}] {ip} - {username} registered with {email}".format(
+            date=time.strftime("%m/%d/%Y %X"),
+            ip=utils.get_ip(),
+            username=request.form['name'].encode('utf-8'),
+            email=request.form['email'].encode('utf-8')
+        ))
+        db.session.close()
+        return redirect(url_for('challenges.challenges_view'))
+    else:
+	return render_template('register.html')
+
+
 def load(app):
     """load overrides for smart_city to work properly"""
     logger.setLevel(app.logger.getEffectiveLevel())
     app.db.create_all()
     register_plugin_assets_directory(app, base_path='/plugins/CTFd_SmartCity/assets')
-    challenges.CHALLENGE_CLASSES['smart_city'] = SmartCity   
-     
+    challenges.CHALLENGE_CLASSES['smart_city'] = SmartCity  
+
+
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    template_path = os.path.join(dir_path, 'new-register.html')
+    override_template('register.html', open(template_path).read()) 
+    app.view_functions['auth.register'] = register_smart    
     
 
     #challenges.CHALLENGE_CLASSES["smart_city"] = SmartCity
