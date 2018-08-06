@@ -264,6 +264,8 @@ def register_smart():
         email = request.form['email']
         password = request.form['password']
 	color = request.form['color']
+	school = request.form['school']
+	image = request.form['image']
 
 
         name_len = len(name) == 0
