@@ -119,6 +119,7 @@ class SmartCity(challenges.BaseChallenge):
 
 		db.session.commit()
 
+		print(chal.buildingId)
 	
 	@staticmethod
 	def read(challenge):
@@ -273,8 +274,8 @@ def register_smart():
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
         smart_colors = SmartCityTeam.query.add_columns('color').filter_by(color=color).first()
+	smart_image = SmartCityTeam.query.add_columns('image').filter_by(image=image).first()
 	#challenge = SmartCityChallenge.query.filter_by(id=challenge.id).first()
-	print(smart_colors)
 	pass_short = len(password) == 0
         pass_long = len(password) > 128
         valid_email = utils.check_email_format(request.form['email'])
@@ -282,7 +283,7 @@ def register_smart():
 
 
         if not valid_email:
-            errors.append("Please enter a valid ieeeeeeemail address")
+            errors.append("Please enter a valid email address")
         if names:
             errors.append('That team name is already taken')
         if team_name_email_check is True:
@@ -296,7 +297,9 @@ def register_smart():
         if name_len:
             errors.append('Pick a longer team name')
 	if smart_colors:
-            errors.append('That color is already taken')
+            errors.append('The following colors are taken:  \n' + getAvailableColors())
+	if smart_image:
+            errors.append('That image is already taken')
 
         if len(errors) > 0:
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
@@ -309,7 +312,7 @@ def register_smart():
 	
 		
 	
-		smart_team = SmartCityTeam(team.id ,team.name, 'rutgers', color, 'image')
+		smart_team = SmartCityTeam(team.id ,team.name, school, color, image)
 		db.session.add(smart_team)
 		db.session.commit()
 		db.session.flush()
@@ -345,6 +348,14 @@ def register_smart():
     else:
 	return render_template('register.html')
 
+
+def getAvailableColors():
+	smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.color).all()
+        result = ""
+	for colorElement in smart_result:
+		result += colorElement.color + ", "
+	result = result[:len(result)-2]
+	return result
 
 def load(app):
     """load overrides for smart_city to work properly"""
