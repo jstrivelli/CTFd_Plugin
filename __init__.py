@@ -19,18 +19,19 @@ basicConfig(level=ERROR)
 logger = getLogger(__name__)
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 
-class SmartCityTeam(Teams):
+class SmartCityTeam(db.Model):
 	_mapper_args__ = {'polymorphic_identity': 'smart_city'}
-	#name = db.Column(None, db.ForeignKey('teams.name'), primary_key=True)
-	id = db.Column(None, db.ForeignKey('teams.id'), primary_key=True)
+	#name = db.Column(None, db.ForeignKey('teams.name'), primary_key=Truep
+	id = db.Column(db.Integer, primary_key=True)
 	#name = db.Column(db.String(128), unique=True)
 	#email = db.Column(db.String(124), unique=True)
 	school = db.Column(db.String(128))
 	color = db.Column(db.String(123))
 	image = db.Column(db.Integer)
-	def __init__(self,school, color, image):
+	def __init__(self, id, name,  school, color, image):
 		#self.name = name
-		#self.email = email
+		self.id = id
+		self.name = name
 		self.school = school
 		self.color = color
 		self.image = image 
@@ -305,8 +306,10 @@ def register_smart():
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()
+	
 		
-		smart_team = SmartCityTeam('rutgers', color, 'hello')
+	
+		smart_team = SmartCityTeam(team.id ,team.name, 'rutgers', color, 'image')
 		db.session.add(smart_team)
 		db.session.commit()
 		db.session.flush()
