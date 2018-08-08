@@ -254,6 +254,11 @@ class SmartCity(challenges.BaseChallenge):
 		db.session.commit()
 		db.session.close()
 
+	@staticmethod
+	def getBuildingId(chal):
+		chal = SmartCityChallenge.query.filter_by(id=chal.id).first()
+		return str(chal.buildingId)	
+
 @auth.route('register', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=5)
 def register_smart():
@@ -356,6 +361,11 @@ def getAvailableColors():
 		result += colorElement.color + ", "
 	result = result[:len(result)-2]
 	return result
+
+@staticmethod
+def getTeamColor(teamId):
+	smart_team = SmartCityTeam.query.filter_by(id=teamId).first()
+	return smart_team.color
 
 def load(app):
     """load overrides for smart_city to work properly"""
