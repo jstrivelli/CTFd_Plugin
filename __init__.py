@@ -1,7 +1,7 @@
 import os
 import logging
 import time
-from flask import render_template
+from flask import render_template, jsonify
 from CTFd.utils import admins_only, is_admin, ratelimit, override_template
 from CTFd.models import db, Challenges, Keys, Awards, Solves, Files, Tags, Teams, WrongKeys
 from CTFd import utils
@@ -12,9 +12,12 @@ from flask import session, Blueprint, request, redirect
 from flask import current_app as app, request, render_template, url_for
 from CTFd.plugins.keys import get_key_class
 from  passlib.hash import bcrypt_sha256
+from CTFd.utils.decorators import authed_only
 from werkzeug.routing import Rule
+from .smartCommand import callSmartCityTable
 
 auth = Blueprint('auth', __name__)
+challenges2 = Blueprint('challenges', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
@@ -259,6 +262,7 @@ class SmartCity(challenges.BaseChallenge):
 		chal = SmartCityChallenge.query.filter_by(id=chal.id).first()
 		return str(chal.buildingId)	
 
+
 @auth.route('register', methods=['POST', 'GET'])
 @ratelimit(method="POST", limit=10, interval=5)
 def register_smart():
@@ -354,7 +358,57 @@ def register_smart():
 	return render_template('register.html')
 
 
+@challenges2.route('/solves')
+@authed_only
+def solves_private_custom():
+    solves = None
+    awards = None
+
+    if utils.is_admin():
+        solves = Solves.query.filter_by(teamid=session['id']).all()
+    elif utils.user_can_view_challenges():
+        if utils.authed():
+            solves = Solves.query\
+                .join(Teams, Solves.teamid == Teams.id)\
+                .filter(Solves.teamid == session['id'])\
+                .all()
+        else:
+            return jsonify({'solves': []})
+    else:
+        return redirect(url_for('auth.login', next='solves'))
+
+    db.session.close()
+    response = {'solves': []}
+    for solve in solves:
+        response['solves'].append({
+            'chal': solve.chal.name,
+            'chalid': solve.chalid,
+            'team': solve.teamid,
+            'value': solve.chal.value,
+            'category': solve.chal.category,
+            'time': utils.unix_time(solve.date)
+        })
+    if awards:
+        for award in awards:
+            response['solves'].append({
+                'chal': award.name,
+                'chalid': None,
+                'team': award.teamid,
+                'value': award.value,
+                'category': award.category or "Award",
+                'time': utils.unix_time(award.date)
+            })
+
+    smart_color = SmartCityTeam.query.filter_by(id=solve.teamid).first().color
+    smart_buildingId = SmartCityChallenge.query.filter_by(id=solve.chalid).first().buildingId
+    callSmartCityTable(smart_buildingId, smart_color)
+    response['solves'].sort(key=lambda k: k['time'])
+    return jsonify(response)
+
+
+
 def getAvailableColors():
+	u
 	smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.color).all()
         result = ""
 	for colorElement in smart_result:
@@ -378,13 +432,6 @@ def load(app):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     template_path = os.path.join(dir_path, 'new-register.html')
     override_template('register.html', open(template_path).read()) 
-    app.view_functions['auth.register'] = register_smart    
+    app.view_functions['auth.register'] = register_smart 
+    app.view_functions['challenges.solves_private'] = solves_private_custom
     
-
-    #challenges.CHALLENGE_CLASSES["smart_city"] = SmartCity
-    #def view_challenges():
-        #return render_template('page.html', content="<h1>Challenges are currently closed</h1>")
-
-    # The format used by the view_functions dictionary is blueprint.view_function_name
-
-    #app.view_functions['challenges.challenges_view'] = view_challenges
