@@ -40,7 +40,7 @@ class SmartTable():
         	json = {'query': query, 'variables': variables}
 
         	# usage without auth token
-                print("Hello")
+                print("Sending request for " + self.building + " with color " + self.color)
 		try:
 			request = check_output(requests.post(API_URL, json=json), stderr=STDOUT, timeout=0.1)
       			print("TEST")

@@ -43,11 +43,11 @@
                			
 			 		<label for="color-input">Color</label>
 
-                                        <select class=form-control>
-  						<option style="background-color:red; color:white"  id="option-1">RED</option>
-  						<option style="background-color:blue; color:white" id="option-2">BLUE</option>
-  						<option style="background-color:green; color:white" id="option-3">GREEN</option>
-  						<option style="background-color:orange; color:white" id="option-4">ORANGE</option>
+                                        <select class=form-control name="color" id=color-input" {% if color %} value = "{{ color }}"{% endif %}>
+  						<option style="background-color:red; color:white"  id="red" value="red">RED</option>
+  						<option style="background-color:blue; color:white" id="blue" value="blue">BLUE</option>
+  						<option style="background-color:green; color:white" id="green" value="green">GREEN</option>
+  						<option style="background-color:orange; color:white" id="orange" value="orange">ORANGE</option>
 					</select>
                                       
                                 </div>
