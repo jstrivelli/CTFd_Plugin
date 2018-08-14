@@ -12,9 +12,10 @@ from flask import session, Blueprint, request, redirect
 from flask import current_app as app, request, render_template, url_for
 from CTFd.plugins.keys import get_key_class
 from  passlib.hash import bcrypt_sha256
-from CTFd.utils.decorators import authed_only
+from CTFd.utils.decorators import authed_only, during_ctf_time_only, viewable_without_authentication
+from CTFd.plugins.challenges import get_chal_class
 from werkzeug.routing import Rule
-from .smartCommand import callSmartCityTable
+from .smartCommand import SmartTable
 
 auth = Blueprint('auth', __name__)
 challenges2 = Blueprint('challenges', __name__)
@@ -358,53 +359,94 @@ def register_smart():
 	return render_template('register.html')
 
 
-@challenges2.route('/solves')
-@authed_only
-def solves_private_custom():
-    solves = None
-    awards = None
 
-    if utils.is_admin():
-        solves = Solves.query.filter_by(teamid=session['id']).all()
-    elif utils.user_can_view_challenges():
-        if utils.authed():
-            solves = Solves.query\
-                .join(Teams, Solves.teamid == Teams.id)\
-                .filter(Solves.teamid == session['id'])\
-                .all()
-        else:
-            return jsonify({'solves': []})
-    else:
-        return redirect(url_for('auth.login', next='solves'))
 
-    db.session.close()
-    response = {'solves': []}
-    for solve in solves:
-        response['solves'].append({
-            'chal': solve.chal.name,
-            'chalid': solve.chalid,
-            'team': solve.teamid,
-            'value': solve.chal.value,
-            'category': solve.chal.category,
-            'time': utils.unix_time(solve.date)
+
+
+@challenges2.route('/chal/<int:chalid>', methods=['POST'])
+@during_ctf_time_only
+@viewable_without_authentication()
+def chal_custom(chalid):
+    if utils.ctf_paused():
+        return jsonify({
+            'status': 3,
+            'message': '{} is paused'.format(utils.ctf_name())
         })
-    if awards:
-        for award in awards:
-            response['solves'].append({
-                'chal': award.name,
-                'chalid': None,
-                'team': award.teamid,
-                'value': award.value,
-                'category': award.category or "Award",
-                'time': utils.unix_time(award.date)
-            })
+    if (utils.authed() and utils.is_verified() and (utils.ctf_started() or utils.view_after_ctf())) or utils.is_admin():
+        team = Teams.query.filter_by(id=session['id']).first()
+        fails = WrongKeys.query.filter_by(teamid=session['id'], chalid=chalid).count()
+        logger = logging.getLogger('keys')
+        data = (time.strftime("%m/%d/%Y %X"), session['username'].encode('utf-8'), request.form['key'].encode('utf-8'), utils.get_kpm(session['id']))
+        print("[{0}] {1} submitted {2} with kpm {3}".format(*data))
 
-    smart_color = SmartCityTeam.query.filter_by(id=solve.teamid).first().color
-    smart_buildingId = SmartCityChallenge.query.filter_by(id=solve.chalid).first().buildingId
-    callSmartCityTable(smart_buildingId, smart_color)
-    response['solves'].sort(key=lambda k: k['time'])
-    return jsonify(response)
+        chal = Challenges.query.filter_by(id=chalid).first_or_404()
+        if chal.hidden:
+            abort(404)
+        chal_class = get_chal_class(chal.type)
 
+        # Anti-bruteforce / submitting keys too quickly
+        if utils.get_kpm(session['id']) > 10:
+            if utils.ctftime():
+                chal_class.fail(team=team, chal=chal, request=request)
+            logger.warn("[{0}] {1} submitted {2} with kpm {3} [TOO FAST]".format(*data))
+            # return '3' # Submitting too fast
+            return jsonify({'status': 3, 'message': "You're submitting keys too fast. Slow down."})
+
+        solves = Solves.query.filter_by(teamid=session['id'], chalid=chalid).first()
+
+        # Challange not solved yet
+        if not solves:
+            provided_key = request.form['key'].strip()
+            saved_keys = Keys.query.filter_by(chal=chal.id).all()
+
+            # Hit max attempts
+            max_tries = chal.max_attempts
+            if max_tries and fails >= max_tries > 0:
+                return jsonify({
+                    'status': 0,
+                    'message': "You have 0 tries remaining"
+                })
+
+            status, message = chal_class.attempt(chal, request)
+            if status:  # The challenge plugin says the input is right
+                if utils.ctftime() or utils.is_admin():
+                    chal_class.solve(team=team, chal=chal, request=request)
+                logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
+		
+		if not utils.is_admin():
+			smart_color = SmartCityTeam.query.filter_by(id=session['id']).first().color
+			smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
+			smart_image = SmartCityTeam.query.filter_by(id=session['id']).first().image
+			smartSession = SmartTable(smart_buildingId, smart_color, smart_image)
+                	smartSession.createSmartCityTableSession()
+
+                return jsonify({'status': 1, 'message': message})
+            else:  # The challenge plugin says the input is wrong
+                if utils.ctftime() or utils.is_admin():
+                    chal_class.fail(team=team, chal=chal, request=request)
+                logger.info("[{0}] {1} submitted {2} with kpm {3} [WRONG]".format(*data))
+                # return '0' # key was wrong
+                if max_tries:
+                    attempts_left = max_tries - fails - 1  # Off by one since fails has changed since it was gotten
+                    tries_str = 'tries'
+                    if attempts_left == 1:
+                        tries_str = 'try'
+                    if message[-1] not in '!().;?[]\{\}':  # Add a punctuation mark if there isn't one
+                        message = message + '.'
+                    return jsonify({'status': 0, 'message': '{} You have {} {} remaining.'.format(message, attempts_left, tries_str)})
+                else:
+                    return jsonify({'status': 0, 'message': message})
+
+        # Challenge already solved
+        else:
+            logger.info("{0} submitted {1} with kpm {2} [ALREADY SOLVED]".format(*data))
+            # return '2' # challenge was already solved
+            return jsonify({'status': 2, 'message': 'You already solved this'})
+    else:
+        return jsonify({
+            'status': -1,
+            'message': "You must be logged in to solve a challenge"
+        })
 
 
 def getAvailableColors():
@@ -433,5 +475,5 @@ def load(app):
     template_path = os.path.join(dir_path, 'new-register.html')
     override_template('register.html', open(template_path).read()) 
     app.view_functions['auth.register'] = register_smart 
-    app.view_functions['challenges.solves_private'] = solves_private_custom
+    app.view_functions['challenges.chal'] = chal_custom
     
