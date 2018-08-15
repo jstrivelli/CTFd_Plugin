@@ -21,7 +21,7 @@ class SmartTable():
 
         	# API_URL = 'http://127.0.0.1:9080/api'
        		API_URL = 'http://192.168.2.25:9080/api'
-
+		request = ""		
 
         	query = """
         	mutation UpdateBuildings($input: [BuildingInput]!) {
@@ -41,11 +41,9 @@ class SmartTable():
 
         	# usage without auth token
                 print("Sending request for " + self.building + " with color " + self.color)
-		try:
-			request = check_output(requests.post(API_URL, json=json), stderr=STDOUT, timeout=0.1)
-      			print("TEST")
-		except:
-			print("didnt work")
+			
+		request = requests.post(API_URL, json=json)
+		
 		if request.status_code == 200:
                 	response = request.json()
                 	print('response', response)
