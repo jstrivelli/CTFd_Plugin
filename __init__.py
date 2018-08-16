@@ -3,7 +3,7 @@ import logging
 import time
 from flask import render_template, jsonify
 from CTFd.utils import admins_only, is_admin, ratelimit, override_template
-from CTFd.models import db, Challenges, Keys, Awards, Solves, Files, Tags, Teams, WrongKeys
+from CTFd.models import db, Challenges, Keys, Awards, Solves, Files, Tags, Teams, WrongKeys, DatabaseError, Unlocks, Tracking
 from CTFd import utils
 from logging import getLogger, basicConfig,DEBUG,ERROR
 from CTFd.plugins import challenges, register_plugin_assets_directory
@@ -494,7 +494,8 @@ def load(app):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     template_path = os.path.join(dir_path, 'new-register.html')
     override_template('register.html', open(template_path).read()) 
+    override_template('team.html', open(template_path).read())
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
-    app.view_functions['teams.delete_team'] = delete_team_custom
+    app.view_functions['admin_teams.delete_team'] = delete_team_custom
  
