@@ -30,12 +30,13 @@ class SmartCityTeam(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	#name = db.Column(db.String(128), unique=True)
 	#email = db.Column(db.String(124), unique=True)
+	teamId = db.Column(db.String(128))
 	school = db.Column(db.String(128))
 	color = db.Column(db.String(123))
 	image = db.Column(db.Integer)
-	def __init__(self, id, name,  school, color, image):
+	def __init__(self, teamId, name,  school, color, image):
 		#self.name = name
-		self.id = id
+		self.teamId = teamId
 		self.name = name
 		self.school = school
 		self.color = color
@@ -474,7 +475,7 @@ def delete_team_custom(teamid):
         Solves.query.filter_by(teamid=teamid).delete()
         Tracking.query.filter_by(team=teamid).delete()
         Teams.query.filter_by(id=teamid).delete()
-	SmartCityTeam.query.filter_by(id=teamid).delete()
+	SmartCityTeam.query.filter_by(teamId=teamid).delete()
         db.session.commit()
         db.session.close()
     except DatabaseError:
@@ -496,11 +497,4 @@ def load(app):
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['teams.delete_team'] = delete_team_custom
-
-
-def main():
-	hey = SmartCityTeam.query.with_entities(SmartCityTeam.id).all()
-	print(hey)
-
-main()
  
