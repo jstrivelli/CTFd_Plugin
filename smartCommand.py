@@ -1,4 +1,5 @@
 import requests
+import time 
 from subprocess import STDOUT, check_output
 
 #output = check_output(cmd, stderr=STDOUT, timeout=seconds)
@@ -10,45 +11,71 @@ class SmartTable():
                 self.color = color
                 self.image = image
 
-	def getColor():
-		return color
-	def getImage():
-		return image
-	def getBuilding():
-		return building
+	def getColor(self):
+		return self.color
+	def getImage(self):
+		return self.image
+	def getBuilding(self):
+		return self.building
 
-	def createSmartCityTableSession(self):
+def createSmartCityTableSession(session):
 
-        	# API_URL = 'http://127.0.0.1:9080/api'
-       		API_URL = 'http://192.168.2.25:9080/api'
-		request = ""		
+        # API_URL = 'http://127.0.0.1:9080/api'
+       	API_URL = 'http://192.168.2.25:9080/api'
+	request = ""		
 
-        	query = """
-        	mutation UpdateBuildings($input: [BuildingInput]!) {
-       		updateBuildings(input: $input) {
-                	id
-               		mode
-        	 }
-       		}
-       		"""
+        query = """
+        mutation UpdateBuildings($input: [BuildingInput]!) {
+       	updateBuildings(input: $input) {
+                id
+               	mode
+        }
+       	}
+       	"""
+	id = session.getBuilding()
 
-        	buildings = [
-                	{"id": self.building, "mode": self.color},
-        	]
+	#if id in ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]:
+	#	lightsCommand(session)
+	
+        buildings = [
+               	{"id": session.getBuilding(), "mode": session.getColor()},
+       	]
 
-        	variables = {'input': buildings}
-        	json = {'query': query, 'variables': variables}
+        variables = {'input': buildings}
+        json = {'query': query, 'variables': variables}
 
-        	# usage without auth token
-                print("Sending request for " + self.building + " with color " + self.color)
+        # usage without auth token
+        print("Sending request for " + session.getBuilding() + " with color " + session.getColor())
 			
-		request = requests.post(API_URL, json=json)
+	request = requests.post(API_URL, json=json)
 		
-		if request.status_code == 200:
-                	response = request.json()
-                	print('response', response)
-        	else:
-                	raise Exception(request.status_code)
+	if request.status_code == 200:
+                response = request.json()
+                print('response', response)
+		time.sleep(7)
+		print("WE ARE SITTING AFTER THE TIMER")
+		buildings = [
+			{"id": session.getBuilding(), "mode":"WHITE"},
+		]
+		variables = {'input':buildings}
+		json = {'query':query, 'variables': variables}
+		request = requests.post(API_URL, json=json)
+        else:
+                raise Exception(request.status_code)
+
+
+def lightsCommand(session):
+	query = """
+		mutation {
+  		updateLights(input: [
+    		{ id: STREET_LIGHT, mode: OFF },
+    		{ id: TRAIN_STATION, mode: ON }
+  		]) {
+    			id
+    			mode
+  		}
+		}
+"""
 
 # usage with auth token
 # api_token = 'YOUR_API_TOKEN_HERE'

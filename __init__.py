@@ -15,8 +15,9 @@ from  passlib.hash import bcrypt_sha256
 from CTFd.utils.decorators import authed_only, during_ctf_time_only, viewable_without_authentication
 from CTFd.plugins.challenges import get_chal_class
 from werkzeug.routing import Rule
-from .smartCommand import SmartTable
+from .smartCommand import SmartTable, createSmartCityTableSession
 
+admin_teams = Blueprint('admin_teams', __name__)
 auth = Blueprint('auth', __name__)
 challenges2 = Blueprint('challenges', __name__)
 basicConfig(level=ERROR)
@@ -418,7 +419,7 @@ def chal_custom(chalid):
 			smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
 			smart_image = SmartCityTeam.query.filter_by(id=session['id']).first().image
 			smartSession = SmartTable(smart_buildingId, smart_color, smart_image)
-                	smartSession.createSmartCityTableSession()
+                	createSmartCityTableSession(smartSession)
 
                 return jsonify({'status': 1, 'message': message})
             else:  # The challenge plugin says the input is wrong
@@ -450,7 +451,6 @@ def chal_custom(chalid):
 
 
 def getAvailableColors():
-	u
 	smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.color).all()
         result = ""
 	for colorElement in smart_result:
@@ -462,6 +462,25 @@ def getAvailableColors():
 def getTeamColor(teamId):
 	smart_team = SmartCityTeam.query.filter_by(id=teamId).first()
 	return smart_team.color
+
+
+@admin_teams.route('/admin/team/<int:teamid>/delete', methods=['POST'])
+@admins_only
+def delete_team_custom(teamid):
+    try:
+        Unlocks.query.filter_by(teamid=teamid).delete()
+        Awards.query.filter_by(teamid=teamid).delete()
+        WrongKeys.query.filter_by(teamid=teamid).delete()
+        Solves.query.filter_by(teamid=teamid).delete()
+        Tracking.query.filter_by(team=teamid).delete()
+        Teams.query.filter_by(id=teamid).delete()
+	SmartCityTeam.query.filter_by(id=teamid).delete()
+        db.session.commit()
+        db.session.close()
+    except DatabaseError:
+        return '0'
+    else:
+	return '1'
 
 def load(app):
     """load overrides for smart_city to work properly"""
@@ -476,4 +495,12 @@ def load(app):
     override_template('register.html', open(template_path).read()) 
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
-    
+    app.view_functions['teams.delete_team'] = delete_team_custom
+
+
+def main():
+	hey = SmartCityTeam.query.with_entities(SmartCityTeam.id).all()
+	print(hey)
+
+main()
+ 
