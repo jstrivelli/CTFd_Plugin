@@ -4,7 +4,25 @@
 {% endblock %}
 
 {% block content %}
-<div class="jumbotron">
+
+<head>
+<style>
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css);
+@import url(https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.4.3/css/mdb.min.css);
+
+.hm-gradient {
+    background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);
+}
+.darken-grey-text {
+    color: #2E2E2E;
+}
+</style>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<head>
+
+
+<div style="background-color:#343a40" class="jumbotron">
 	<div class="container">
 		<h1>Register</h1>
 	</div>
@@ -42,15 +60,38 @@
 					 
                			
 			 		<label for="color-input">Color</label>
-
-                                        <select class=form-control name="color" id=color-input" {% if color %} value = "{{ color }}"{% endif %}>
-  						<option style="background-color:red; color:white"  id="RED" value="RED">RED</option>
-  						<option style="background-color:blue; color:white" id="BLUE" value="BLUE">BLUE</option>
-  						<option style="background-color:green; color:white" id="GREEN" value="GREEN">GREEN</option>
-  						<option style="background-color:orange; color:white" id="ORANGE" value="ORANGE">ORANGE</option>
-					</select>
-                                      
-                                </div>
+     
+					<div class="container text-center mt-4">				 
+						<div class="card mb-4">
+                					<div class="card-body">
+	    							<!--Red-->
+                    						<button type="button" class="btn btn-red" name="color" id="RED" value="RED" onclick="myFunction()">RED</button>
+                    						<!--Blue-->
+                    						<button type="button" class="btn btn-blue" id="BLUE" value="BLUE">BLUE</button>
+								<br>
+                    						<!--Green-->
+                    						<button type="button" class="btn btn-green" id="GREEN" value="GREEN">GREEN</button>
+                    						<!--Yellow-->
+                    						<button type="button" class="btn btn-yellow" id="YELLOW" value="YELLOw">YELLOW</button>
+                    						<br>
+								<!--Aqua-->
+                    						<button type="button" class="btn btn-cyan" id="AQUA" value="AQUA">AQUA</button>
+                   						 <!--Purple-->
+                    						<button type="button" class="btn btn-purple" id="PURPLE" value="PURPLE">PURPLE</button>
+                    						<br>
+                    						<!--Dark-green-->
+                    						<button type="button" class="btn btn-dark-green" style="background-color:#ea7cd9" value="PINK">PINK</button>
+                    						<!--Light-green-->
+                    						<button type="button" class="btn btn-light-green" style="background-color:#00b995">TURQUOIS</button>
+                    						<br>
+								<!--Yellow-->
+                    						<button type="button" class="btn btn-yellow" style="background-color:#bd8802">GOLD</button>
+                    						<!--Amber-->
+                    						<button type="button" class="btn btn-amber" style="background-color:#9cff29; color:black">NEON</button>
+                    						
+                					</div>
+            					</div> 
+					</div>
 				 <div class="form-group">
                                         <label for="password-input">
                                                 School
@@ -58,7 +99,7 @@
                                         <input class="form-control" type="text" name="school" id="color-input" {% if school %}value="{{ school }}"{% endif %}/>
                                 </div>
 				 <div class="form-group">
-                                        <label for="password-input">
+                                        <label for=image-input">
                                                 Image
                                         </label>
                                         <input class="form-control" type="text" name="image" id="color-input" {% if image %}value="{{ image }}"{% endif %}/>
@@ -74,6 +115,23 @@
 		</div>
 	</div>
 </div>
+<script>
+
+function myFunction() {
+    document.getElementById("color").value = document.getElementById("color").value;
+}
+<script>
+
+$('.button').click(function(){
+    if($(this).hasClass('active')){
+        $(this).removeClass('active')
+    } else {
+        $(this).addClass('active')
+    }
+});
+
+</script>
+</script>
 {% endblock %}
 
 {% block scripts %}

@@ -465,6 +465,69 @@ def getTeamColor(teamId):
 	return smart_team.color
 
 
+@admin_teams.route('/admin/team/new', methods=['POST'])
+@admins_only
+def admin_create_team_custom():
+    name = request.form.get('name', None)
+    password = request.form.get('password', None)
+    email = request.form.get('email', None)
+    color = request.form.get('color', None)
+    school = request.form.get('school', None)
+    image = request.form.get('image', None)
+
+    admin_user = True if request.form.get('admin', None) == 'on' else False
+    verified = True if request.form.get('verified', None) == 'on' else False
+    hidden = True if request.form.get('hidden', None) == 'on' else False
+    
+    smart_color = SmartCityTeam.query.add_columns('color').filter_by(color=color).first()
+    smart_image = SmartCityTeam.query.add_columns('image').filter_by(image=image).first() 
+
+    errors = []
+
+    if not name:
+        errors.append('The team requires a name')
+    elif Teams.query.filter(Teams.name == name).first():
+        errors.append('That name is taken')
+
+    if utils.check_email_format(name) is True:
+        errors.append('Team name cannot be an email address')
+
+    if not email:
+        errors.append('The team requires an email')
+    elif Teams.query.filter(Teams.email == email).first():
+        errors.append('That email is taken')
+
+    if email:
+        valid_email = utils.check_email_format(email)
+        if not valid_email:
+            errors.append("That email address is invalid")
+
+    if not password:
+        errors.append('The team requires a password')
+
+    if smart_color:
+	errors.append('Color was already taken. Colors not available: ' +  getAvailableColors())
+    if smart_image:
+	errors.append('Imagge already taken') 
+    if errors:
+        db.session.close()
+        return jsonify({'data': errors})
+
+    team = Teams(name, email, password)
+    team.website = website
+    team.affiliation = affiliation
+    team.country = country
+
+    team.admin = admin_user
+    team.verified = verified
+    team.hidden = hidden
+
+    db.session.add(team)
+    db.session.commit()
+    db.session.close()
+    return jsonify({'data': ['success']})
+
+
 @admin_teams.route('/admin/team/<int:teamid>/delete', methods=['POST'])
 @admins_only
 def delete_team_custom(teamid):
@@ -493,9 +556,10 @@ def load(app):
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
     template_path = os.path.join(dir_path, 'new-register.html')
-    override_template('register.html', open(template_path).read()) 
-    override_template('team.html', open(template_path).read())
+    override_template('register.html', open(template_path).read())
+    template_path = os.path.join(dir_path, 'new-team.html') 
+    override_template('admin/teams.html', open(template_path).read())
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['admin_teams.delete_team'] = delete_team_custom
- 
+    app.view_functions['admin_teams.create_team'] = admin_create_team_custom 
