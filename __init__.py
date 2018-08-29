@@ -22,7 +22,7 @@ auth = Blueprint('auth', __name__)
 challenges2 = Blueprint('challenges', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
-teamColorList = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
+teamColors = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
 
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 
@@ -281,8 +281,10 @@ def register_smart():
 	#school = request.form['school']
 	image = request.form['image']
 	
+	if not color in teamColors:
+		color = "RED"
 	print("Color is " + color) 
-
+	print("Image is " + image)
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
@@ -476,8 +478,10 @@ def admin_create_team_custom():
     password = request.form.get('password', None)
     email = request.form.get('email', None)
     color = request.form.get('color', None)
-    school = request.form.get('school', None)
     image = request.form.get('image', None)
+
+    if not color in teamColors:
+	color = "RED"
 
     admin_user = True if request.form.get('admin', None) == 'on' else False
     verified = True if request.form.get('verified', None) == 'on' else False
@@ -486,6 +490,8 @@ def admin_create_team_custom():
     smart_color = SmartCityTeam.query.add_columns('color').filter_by(color=color).first()
     smart_image = SmartCityTeam.query.add_columns('image').filter_by(image=image).first() 
 
+    print("Smart Color: " +str(smart_color))
+       
     errors = []
 
     if not name:
@@ -510,7 +516,7 @@ def admin_create_team_custom():
         errors.append('The team requires a password')
 
     if smart_color:
-	errors.append('Color was already taken. Colors not available: ' +  getAvailableColors())
+	errors.append('Color was taken. Available Colors: ' +  getAvailableColors())
     if smart_image:
 	errors.append('Imagge already taken') 
     if errors:
@@ -518,9 +524,10 @@ def admin_create_team_custom():
         return jsonify({'data': errors})
 
     team = Teams(name, email, password)
-    team.website = website
-    team.affiliation = affiliation
-    team.country = country
+    
+    #team.website = website
+    #team.affiliation = affiliation
+    #team.country = country
 
     team.admin = admin_user
     team.verified = verified
@@ -528,13 +535,19 @@ def admin_create_team_custom():
 
     db.session.add(team)
     db.session.commit()
+
+    smart_team = SmartCityTeam(team.id, name, color, image)
+    db.session.add(smart_team)
+    db.session.commit()
     db.session.close()
+
     return jsonify({'data': ['success']})
 
 
 @admin_teams.route('/admin/team/<int:teamid>/delete', methods=['POST'])
 @admins_only
 def delete_team_custom(teamid):
+    print("Deleting team")
     try:
         Unlocks.query.filter_by(teamid=teamid).delete()
         Awards.query.filter_by(teamid=teamid).delete()
@@ -566,4 +579,4 @@ def load(app):
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['admin_teams.delete_team'] = delete_team_custom
-    app.view_functions['admin_teams.create_team'] = admin_create_team_custom 
+    app.view_functions['admin_teams.admin_create_team'] = admin_create_team_custom 

@@ -8,6 +8,23 @@
 
 <head>
 <style>
+img {
+    height: 40px;
+    width: 40px;
+    margin: 10px;
+}
+#option6{
+    height: 100px;
+}    
+
+brn-group {
+    overflow-y: scroll;
+}
+[type='radio'] {
+display: none; 
+}
+</style>
+<style>
 
 
 html, body {
@@ -221,12 +238,54 @@ html, body {
 						
 				</div>	
 				 <div class="form-group">
-                                        <label for=image-input">
-                                                Image
-                                        </label>
-                                        <input class="form-control" type="text" name="image" id="color-input" {% if image %}value="{{ image }}"{% endif %}/>
+                                        <label for=image-input">Image</label>
+					<div class="btn-group btn-group-toggle" data-toggle="buttons">
+						<ul>
+  							<li class="btn btn-light active">
+    								<input type="radio" name="image" id="option1" value="MURRAY" autocomplete="off" checked> 
+    								<img src="https://www.gokcgiants.com/common/controls/image_handler.aspx?thumb_prefix=headshot_2&image_path=/images/2016/2/10/Dan_Maguire.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Murray
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option2" autocomplete="off" value="SAMPLE2"> 
+      								<img src="https://www.gravatar.com/avatar/75550aaf5b7db5ega2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Astra
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option3" autocomplete="off" value="SAMPLE3"> 
+      								<img src="https://www.gravatar.com/avatar/735550aaf5b7db5eba2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Sample3
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option4" autocomplete="off" value="SAMPLE4"> 
+      								<img src="https://www.gravatar.com/avatar/735550aaf5b7db5eba2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Sample4
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option5" autocomplete="off" value="SAMPLE5"> 
+      								<img src="https://www.gravatar.com/avatar/735550aaf5b7db5eba2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br> Sample5
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option6" autocomplete="off" value="SAMPLE6"> 
+      								<img src="http://static.fmgsuite.com/media/images/ddd61a9d-0365-4a52-8b64-49123aeff914.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Sample6
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option2" autocomplete="off" value="SAMPLE7"> 
+      								<img src="https://goexplorers.com/images/2015/10/9//Rosenblatt.jpg?width=300" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Astra
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option2" autocomplete="off" value="SAMPLE8"> 
+      								<img src="https://www.gravatar.com/avatar/75550aaf5b7db5ega2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Astra
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option3" autocomplete="off" value="SAMPLE9"> 
+      								<img src="https://www.gravatar.com/avatar/735550aaf5b7db5eba2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Sample3
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option4" autocomplete="off" value="SAMPLE10"> 
+      								<img src="https://www.gravatar.com/avatar/735550aaf5b7db5eba2283ac3171b05ea?s=256&d=identicon&r=PG&f=1" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Sample4
+  							</li>
+ 							
+  						</ul>
+					</div>
                                 </div>
-
+				<br>
 				<div class="row pt-3">
 					<div class="col-md-12">
 						<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined float-right">Submit</button>
@@ -237,6 +296,8 @@ html, body {
 		</div>
 	</div>
 </div>
+<br>
+<br>
 {% endblock %}
 
 {% block scripts %}
