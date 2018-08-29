@@ -6,6 +6,90 @@
 {% block content %}
 
 <head>
+<style>
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+
+.custom-radios div {
+  display: inline-block;
+}
+.custom-radios input[type="radio"] {
+  display: none;
+}
+.custom-radios input[type="radio"] + label {
+  color: #333;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+.custom-radios input[type="radio"] + label span {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin: -1px 4px 0 0;
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  line-height: 44px;
+}
+.custom-radios input[type="radio"] + label span img {
+  opacity: 0;
+  transition: all .3s ease;
+}
+.custom-radios input[type="radio"]#GREEN + label span {
+  background-color: #2ecc71;
+}
+.custom-radios input[type="radio"]#BLUE + label span {
+  background-color: #3498db;
+}
+.custom-radios input[type="radio"]#YELLOW + label span {
+  background-color: #f1c40f;
+}
+.custom-radios input[type="radio"]#RED + label span {
+  background-color: #e74c3c;
+}
+
+.custom-radios input[type="radio"]#AQUA + label span {
+  background-color: #4cf1ff;
+}
+
+.custom-radios input[type="radio"]#GOLD + label span {
+  background-color: #af8e09;
+}
+.custom-radios input[type="radio"]#TURQUOIS + label span {
+  background-color: #1df9c3;
+}
+.custom-radios input[type="radio"]#PURPLE + label span {
+  background-color: #ae36fd;
+}
+.custom-radios input[type="radio"]#PINK + label span {
+  background-color: #ae36fd;
+}
+.custom-radios input[type="radio"]#PINK + label span {
+  background-color: #f171e8;
+}
+
+.custom-radios input[type="radio"]#LIMEGREEN + label span {
+  background-color: #4aff4e;
+}
+
+.custom-radios input[type="radio"]:checked + label span {
+  opacity: 1;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/check-icn.svg) center center no-repeat;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+
+}
+</style>
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 </head>
@@ -74,37 +158,89 @@
 					</div>
 					<div class="form-group">
 						<label for="color-input">Color</label>
-						<div class="container text-center mt-4">				 
-						<div class="card mb-4">
-                					<div class="card-body">
-	    							<!--Red-->
-                    						<button type="button" class="btn btn-red" name="color" id="RED" value="RED" style="background-color:red" onclick="myFunction()">RED</button>
-                    						<!--Blue-->
-                    						<button type="button" class="btn btn-blue" id="BLUE" value="BLUE" style="background-color:blue">BLUE</button>
-								<br>
-                    						<!--Green-->
-                    						<button type="button" class="btn btn-green" id="GREEN" value="GREEN" style="background-color:#2cd62c">GREEN</button>
-                    						<!--Yellow-->
-                    						<button type="button" class="btn btn-yellow" id="YELLOW" value="YELLOw" style="background-color:yellow">YELLOW</button>
-                    						<br>
-								<!--Aqua-->
-                    						<button type="button" class="btn btn-cyan" id="AQUA" value="AQUA" style="background-color:#70ebfd">AQUA</button>
-                   						 <!--Purple-->
-                    						<button type="button" class="btn btn-purple" id="PURPLE" value="PURPLE" style="background-color:#ce02ce">PURPLE</button>
-                    						<br>
-                    						<!--Dark-green-->
-                    						<button type="button" class="btn btn-dark-green" style="background-color:#ea7cd9" value="PINK">PINK</button>
-                    						<!--Light-green-->
-                    						<button type="button" class="btn btn-light-green" style="background-color:#00b995">TURQUOIS</button>
-                    						<br>
-								<!--Yellow-->
-                    						<button type="button" class="btn btn-yellow" style="background-color:#bd8802">GOLD</button>
-                    						<!--Amber-->
-                    						<button type="button" class="btn btn-amber" style="background-color:#9cff29; color:black">NEON</button>
-                    						
-                					</div>
-            					</div> 
-					</div>
+						<div class="container">
+                                                <div class="row">
+
+                                                        <div class="custom-radios">
+                                                                <div>
+                                                                        <input type="radio" id="GREEN" name="color" value="GREEN" checked>
+                                                                        <label for="GREEN">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="BLUE" name="color" value="BLUE">
+                                                                        <label for="BLUE">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="YELLOW" name="color" value="YELLOW">
+                                                                        <label for="YELLOW">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="RED" name="color" value="RED">
+                                                                        <label for="RED">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+                                                                <div>
+                                                                        <input type="radio" id="AQUA" name="color" value="AQUA" checked>
+                                                                        <label for="AQUA">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+                                                                 <div>
+                                                                        <input type="radio" id="PURPLE" name="color" value="PURPLE" checked>
+                                                                        <label for="PURPLE">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+								 <div>
+                                                                        <input type="radio" id="GOLD" name="color" value="GOLD">
+                                                                        <label for="GOLD">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="TURQUOIS" name="color" value="TURQUOIS">
+                                                                        <label for="TURQUOIS">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="PINK" name="color" value="PINK">
+                                                                        <label for="PINK">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+                                                                <div>
+                                                                        <input type="radio" id="LIMEGREEN" name="color" value="LIMEGREEN" checked>
+                                                                        <label for="LIMEGREEN">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+							</div>
+						</div>
+						</div>						
 					</div>
 					<div class="form-group">
 						<label for="affiliation">Image</label>

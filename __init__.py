@@ -22,6 +22,8 @@ auth = Blueprint('auth', __name__)
 challenges2 = Blueprint('challenges', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
+teamColorList = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
+
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 
 class SmartCityTeam(db.Model):
@@ -31,14 +33,12 @@ class SmartCityTeam(db.Model):
 	#name = db.Column(db.String(128), unique=True)
 	#email = db.Column(db.String(124), unique=True)
 	teamId = db.Column(db.String(128))
-	school = db.Column(db.String(128))
 	color = db.Column(db.String(123))
 	image = db.Column(db.Integer)
-	def __init__(self, teamId, name,  school, color, image):
+	def __init__(self, teamId, name, color, image):
 		#self.name = name
 		self.teamId = teamId
 		self.name = name
-		self.school = school
 		self.color = color
 		self.image = image 
 
@@ -278,7 +278,7 @@ def register_smart():
         email = request.form['email']
         password = request.form['password']
 	color = request.form['color']
-	school = request.form['school']
+	#school = request.form['school']
 	image = request.form['image']
 	
 	print("Color is " + color) 
@@ -310,7 +310,7 @@ def register_smart():
         if name_len:
             errors.append('Pick a longer team name')
 	if smart_colors:
-            errors.append('The following colors are taken:  \n' + getAvailableColors())
+            errors.append('The following colors are available:  \n' + getAvailableColors())
 	if smart_image:
             errors.append('That image is already taken')
 
@@ -325,7 +325,7 @@ def register_smart():
 	
 		
 	
-		smart_team = SmartCityTeam(team.id ,team.name, school, color, image)
+		smart_team = SmartCityTeam(team.id ,team.name, color, image)
 		db.session.add(smart_team)
 		db.session.commit()
 		db.session.flush()
@@ -453,12 +453,15 @@ def chal_custom(chalid):
 
 
 def getAvailableColors():
+	teamColorList = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
 	smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.color).all()
-        result = ""
+	colorsPickedList = []
 	for colorElement in smart_result:
-		result += colorElement.color + ", "
-	result = result[:len(result)-2]
-	return result
+		colorsPickedList.append(colorElement.color)        
+	print(str(colorsPickedList))
+	availColorList = set(teamColorList) - set(colorsPickedList)
+	
+	return str(list(availColorList))
 
 @staticmethod
 def getTeamColor(teamId):
