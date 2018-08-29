@@ -4,6 +4,11 @@
 {% endblock %}
 
 {% block content %}
+
+<head>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+</head>
 <div class="jumbotron">
 	<div class="container">
 		<h1>Teams
@@ -68,9 +73,38 @@
 						<input type="password" class="form-control" name="password" id="password"/>
 					</div>
 					<div class="form-group">
-						<label for="website">Color</label>
-						<input type="text" class="form-control" name="website" id="website"
-							   placeholder="Enter website">
+						<label for="color-input">Color</label>
+						<div class="container text-center mt-4">				 
+						<div class="card mb-4">
+                					<div class="card-body">
+	    							<!--Red-->
+                    						<button type="button" class="btn btn-red" name="color" id="RED" value="RED" style="background-color:red" onclick="myFunction()">RED</button>
+                    						<!--Blue-->
+                    						<button type="button" class="btn btn-blue" id="BLUE" value="BLUE" style="background-color:blue">BLUE</button>
+								<br>
+                    						<!--Green-->
+                    						<button type="button" class="btn btn-green" id="GREEN" value="GREEN" style="background-color:#2cd62c">GREEN</button>
+                    						<!--Yellow-->
+                    						<button type="button" class="btn btn-yellow" id="YELLOW" value="YELLOw" style="background-color:yellow">YELLOW</button>
+                    						<br>
+								<!--Aqua-->
+                    						<button type="button" class="btn btn-cyan" id="AQUA" value="AQUA" style="background-color:#70ebfd">AQUA</button>
+                   						 <!--Purple-->
+                    						<button type="button" class="btn btn-purple" id="PURPLE" value="PURPLE" style="background-color:#ce02ce">PURPLE</button>
+                    						<br>
+                    						<!--Dark-green-->
+                    						<button type="button" class="btn btn-dark-green" style="background-color:#ea7cd9" value="PINK">PINK</button>
+                    						<!--Light-green-->
+                    						<button type="button" class="btn btn-light-green" style="background-color:#00b995">TURQUOIS</button>
+                    						<br>
+								<!--Yellow-->
+                    						<button type="button" class="btn btn-yellow" style="background-color:#bd8802">GOLD</button>
+                    						<!--Amber-->
+                    						<button type="button" class="btn btn-amber" style="background-color:#9cff29; color:black">NEON</button>
+                    						
+                					</div>
+            					</div> 
+					</div>
 					</div>
 					<div class="form-group">
 						<label for="affiliation">Image</label>
@@ -85,6 +119,7 @@
 					<div class="form-group">
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="checkbox" name="admin" id="admin-checkbox">
+
 							<label class="form-check-label" for="admin-checkbox">Admin</label>
 						</div>
 						<div class="form-check form-check-inline">

@@ -280,7 +280,8 @@ def register_smart():
 	color = request.form['color']
 	school = request.form['school']
 	image = request.form['image']
-
+	
+	print("Color is " + color) 
 
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
