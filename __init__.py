@@ -84,15 +84,21 @@ class SmartCity(challenges.BaseChallenge):
 		:param request:
 		:return:
 		"""
-		
+
+		buildingList = []
+		for item in request.form:
+			if "buildingId" in item:
+			    buildingList.append(request.form[item])
+					
+
 		files = request.files.getlist('files[]')
-	
+                 	
 		chal = SmartCityChallenge(
 			name= request.form['name'],
 			category = request.form['category'],
 			description = request.form['description'],
 			value = request.form['value'],
-			buildingId = request.form['buildingId'],
+			buildingId = str(buildingList),
 			type=request.form['chaltype']
 		
 		)
@@ -108,7 +114,7 @@ class SmartCity(challenges.BaseChallenge):
 
 
 
-		logger.debug("Genereted buildingId " + chal.buildingId + " for challenge " + chal.name)
+		#logger.debug("Genereted buildingId " + chal.buildingId + " for challenge " + chal.name)
 		
 		db.session.add(chal)
 		db.session.commit() 
@@ -124,8 +130,7 @@ class SmartCity(challenges.BaseChallenge):
 			utils.upload_file(file=f, chalid=chal.id)
 
 		db.session.commit()
-
-		print(chal.buildingId)
+		
 	
 	@staticmethod
 	def read(challenge):
