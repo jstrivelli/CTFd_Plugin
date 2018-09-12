@@ -20,6 +20,7 @@ from .smartCommand import SmartTable, createSmartCityTableSession
 admin_teams = Blueprint('admin_teams', __name__)
 auth = Blueprint('auth', __name__)
 challenges2 = Blueprint('challenges', __name__)
+views = Blueprint('views', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
 teamColors = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
@@ -608,6 +609,103 @@ def admin_teams_view_custom(page):
     return render_template('admin/teams.html', teams=zip(teams, smart_teams), pages=pages, curr_page=page)
 
 
+
+@views.route('/setup', methods=['GET', 'POST'])
+def setup_custom():
+    # with app.app_context():
+        # admin = Teams.query.filter_by(admin=True).first()
+    if not utils.is_setup():
+        if not session.get('nonce'):
+            session['nonce'] = utils.sha512(os.urandom(10))
+        if request.method == 'POST':
+            ctf_name = request.form['ctf_name']
+            ctf_name = utils.set_config('ctf_name', ctf_name)
+
+            # CSS
+            css = utils.set_config('start', '')
+
+            # Admin user
+            name = request.form['name']
+            email = request.form['email']
+            password = request.form['password']
+            admin = Teams(name, email, password)
+            admin.admin = True
+            admin.banned = True
+            color = request.form['color']
+            image = request.form['image']
+
+	    admin_smart = SmartCityTeam(admin.id, name, color, image)
+
+            # Index page
+
+            index = """<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
+        <h3 class="text-center">
+            <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
+            <p>Follow us on social media:</p>
+            <a href="https://twitter.com/ctfdio"><i class="fab fa-twitter fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://facebook.com/ctfdio"><i class="fab fa-facebook fa-2x" aria-hidden="true"></i></a>&nbsp;
+            <a href="https://github.com/ctfd"><i class="fab fa-github fa-2x" aria-hidden="true"></i></a>
+        </h3>
+        <br>
+        <h4 class="text-center">
+            <a href="admin">Click here</a> to login and setup your CTF
+        </h4>
+    </div>
+</div>""".format(request.script_root)
+
+            page = Pages(title=None, route='index', html=index, draft=False)
+
+            # max attempts per challenge
+            max_tries = utils.set_config('max_tries', 0)
+
+            # Start time
+            start = utils.set_config('start', None)
+            end = utils.set_config('end', None)
+            freeze = utils.set_config('freeze', None)
+
+            # Challenges cannot be viewed by unregistered users
+            view_challenges_unregistered = utils.set_config('view_challenges_unregistered', None)
+
+            # Allow/Disallow registration
+            prevent_registration = utils.set_config('prevent_registration', None)
+
+            # Verify emails
+            verify_emails = utils.set_config('verify_emails', None)
+
+            mail_server = utils.set_config('mail_server', None)
+            mail_port = utils.set_config('mail_port', None)
+            mail_tls = utils.set_config('mail_tls', None)
+            mail_ssl = utils.set_config('mail_ssl', None)
+            mail_username = utils.set_config('mail_username', None)
+            mail_password = utils.set_config('mail_password', None)
+            mail_useauth = utils.set_config('mail_useauth', None)
+
+            setup = utils.set_config('setup', True)
+
+            db.session.add(page)
+            db.session.add(admin)
+            db.session.add(admin_smart)
+            db.session.commit()
+
+            session['username'] = admin.name
+            session['id'] = admin.id
+            session['admin'] = admin.admin
+            session['nonce'] = utils.sha512(os.urandom(10))
+
+            db.session.close()
+            app.setup = False
+            with app.app_context():
+                cache.clear()
+
+            return redirect(url_for('views.static_html'))
+        return render_template('setup.html', nonce=session.get('nonce'))
+    return redirect(url_for('views.static_html'))
+
+
+
+
 def load(app):
     """load overrides for smart_city to work properly"""
     logger.setLevel(app.logger.getEffectiveLevel())
@@ -621,8 +719,11 @@ def load(app):
     override_template('register.html', open(template_path).read())
     template_path = os.path.join(dir_path, 'new-team.html') 
     override_template('admin/teams.html', open(template_path).read())
+    template_path = os.path.join(dir_path, 'new-setup.html')
+    override_template('setup.html', open(template_path).read())
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['admin_teams.delete_team'] = delete_team_custom
     app.view_functions['admin_teams.admin_create_team'] = admin_create_team_custom
-    app.view_functions['admin_teams.admin_teams_view'] = admin_teams_view_custom 
+    app.view_functions['admin_teams.admin_teams_view'] = admin_teams_view_custom
+    app.view_functions['views.setup'] = setup_custom 

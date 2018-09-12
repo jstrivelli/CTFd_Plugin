@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block content %}
+
+<head>
+<style>
+img {
+    height: 50px;
+    width: 50px;
+    margin: 10px;
+}
+#option6{
+    height: 100px;
+}    
+brn-group {
+    overflow-y: scroll;
+}
+[type='radio'] {
+display: none; 
+}
+</style>
+<style>
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+.custom-radios div {
+  display: inline-block;
+}
+.custom-radios input[type="radio"] {
+  display: none;
+}
+.custom-radios input[type="radio"] + label {
+  color: #333;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+.custom-radios input[type="radio"] + label span {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  margin: -1px 4px 0 0;
+  vertical-align: middle;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+  background-repeat: no-repeat;
+  background-position: center;
+  text-align: center;
+  line-height: 44px;
+}
+.custom-radios input[type="radio"] + label span img {
+  opacity: 0;
+  transition: all .3s ease;
+}
+.custom-radios input[type="radio"]#GREEN + label span {
+  background-color: #2ecc71;
+}
+.custom-radios input[type="radio"]#BLUE + label span {
+  background-color: #3498db;
+}
+.custom-radios input[type="radio"]#YELLOW + label span {
+  background-color: #f1c40f;
+}
+.custom-radios input[type="radio"]#RED + label span {
+  background-color: #e74c3c;
+}
+.custom-radios input[type="radio"]#AQUA + label span {
+  background-color: #4cf1ff;
+}
+.custom-radios input[type="radio"]#GOLD + label span {
+  background-color: #af8e09;
+}
+.custom-radios input[type="radio"]#TURQUOIS + label span {
+  background-color: #1df9c3;
+}
+.custom-radios input[type="radio"]#PURPLE + label span {
+  background-color: #ae36fd;
+}
+.custom-radios input[type="radio"]#PINK + label span {
+  background-color: #f171e8;
+}
+.custom-radios input[type="radio"]#LIMEGREEN + label span {
+  background-color: #4aff4e;
+}
+.custom-radios input[type="radio"]:checked + label span {
+  opacity: 1;
+  background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/check-icn.svg) center center no-repeat;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+}
+</style>
+
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+
+	<div class="jumbotron">
+		<div class="container">
+			<h1>Setup</h1>
+		</div>
+	</div>
+	<div class="container">
+		<div class="col-md-6 offset-md-3">
+			<h2 class="text-center">CTF Settings</h2>
+			{% for error in errors %}
+				<div class="submit-row">
+					<div class="alert alert-danger alert-dismissable" role="alert">
+						<span class="sr-only">Error:</span>
+						{{ error }}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+								aria-hidden="true">×</span></button>
+					</div>
+				</div>
+			{% endfor %}
+			<form method="post" accept-charset="utf-8" autocomplete="off" role="form" class="form-horizontal">
+				<input type="hidden" name="nonce" value="{{ nonce }}">
+				{# This nonce is implemented specially in the route itself #}
+				<div class="form-group">
+					<label for="ctf_name-input">
+						CTF Name
+					</label>
+					<input class="form-control" type="text" name="ctf_name" id="ctf_name-input"/>
+				</div>
+				<div class="form-group">
+					<label for="username-input">
+						Admin Username
+					</label>
+					<input class="form-control" type="text" name="name" id="username-input"/>
+				</div>
+				<div class="form-group">
+					<label for="email-input">
+						Admin Email
+					</label>
+					<input class="form-control" type="email" name="email" id="email-input"/>
+				</div>
+				<div class="form-group">
+					<label for="password-input">
+						Admin Password
+					</label>
+					<input class="form-control" type="password" name="password" id="password-input"/>
+				</div>
+				<div class="form-group">
+					 <label for="color-input"> Color </label>
+					<div class="container">
+						<div class="row">
+		
+							<div class="custom-radios">
+  								<div>
+    									<input type="radio" id="GREEN" name="color" value="GREEN" checked>
+    									<label for="GREEN">
+      									<span>
+      									</span>
+    									</label>
+  								</div>
+  
+  								<div>
+    									<input type="radio" id="BLUE" name="color" value="BLUE">
+    									<label for="BLUE">
+      									<span>
+      									</span>
+    									</label>
+  								</div>
+  
+  								<div>
+    									<input type="radio" id="YELLOW" name="color" value="YELLOW">
+    									<label for="YELLOW">
+      									<span>
+      									</span>
+    									</label>
+  								</div>
+
+  								<div>
+    									<input type="radio" id="RED" name="color" value="RED">
+    									<label for="RED">
+      									<span>
+      									</span>
+    									</label>
+  								</div>
+								<div>
+                                                                        <input type="radio" id="AQUA" name="color" value="AQUA" checked>
+                                                                        <label for="AQUA">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+								 <div>
+                                                                        <input type="radio" id="PURPLE" name="color" value="PURPLE" checked>
+                                                                        <label for="PURPLE">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="GOLD" name="color" value="GOLD">
+                                                                        <label for="GOLD">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="TURQUOIS" name="color" value="TURQUOIS">
+                                                                        <label for="TURQUOIS">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+                                                                <div>
+                                                                        <input type="radio" id="PINK" name="color" value="PINK">
+                                                                        <label for="PINK">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+                                                                <div>
+                                                                        <input type="radio" id="LIMEGREEN" name="color" value="LIMEGREEN" checked>
+                                                                        <label for="LIMEGREEN">
+                                                                        <span>
+                                                                        </span>
+                                                                        </label>
+                                                                </div>
+
+							</div>
+						</div>
+					</div>
+						
+				</div>	
+				 <div class="form-group">
+                                        <label for=image-input">Image</label>
+					<div class="btn-group btn-group-toggle" data-toggle="buttons">
+						<ul>
+  							<li class="btn btn-light active">
+    								<input type="radio" name="image" id="option1" value="WOLF" autocomplete="off" checked> 
+    								<img src="http://hdwpro.com/wp-content/uploads/2017/01/3D-Cool-Image.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Wolf
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option2" autocomplete="off" value="SAMPLE"> 
+      								<img src="https://newevolutiondesigns.com/images/freebies/animals-background-3.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Tiger
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option3" autocomplete="off" value="SAMPLE3"> 
+      								<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlbTxktwBL3XrGVglUKzt5ede7F4ToHK6ybn64Qto3q8ilP7Rz" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Panda
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option4" autocomplete="off" value="SAMPLE4"> 
+      								<img src="http://s1.1zoom.me/b5050/629/Dogs_Shar_Pei_White_498500_2880x1800.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Dog
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option5" autocomplete="off" value="SAMPLE5"> 
+      								<img src="https://images4.alphacoders.com/150/thumb-1920-150464.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br> Eagle
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option6" autocomplete="off" value="SAMPLE6"> 
+      								<img src="http://mignews.com/aimages/06_15/130615_143713_31901_2.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Monkey
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option2" autocomplete="off" value="SAMPLE7"> 
+      								<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUqie4Y8KM5N2QwgyJEuPia1Z9H5TfFYvq_RO72lCdP7YMXGrv" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Giraff
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option2" autocomplete="off" value="SAMPLE8"> 
+      								<img src="https://images5.alphacoders.com/337/thumb-1920-337762.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Rhino
+  							</li>
+  							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option3" autocomplete="off" value="SAMPLE9"> 
+      								<img src="https://images3.alphacoders.com/494/thumb-1920-4947.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Shark
+  							</li>
+ 							<li class="btn btn-light">
+    								<input type="radio" name="image" id="option4" autocomplete="off" value="SAMPLE10"> 
+      								<img src="https://www.planwallpaper.com/static/images/7004579-cool-hd-wallpapers.jpg" alt="" width="24" height="24" class="-avatar js-avatar-me"> <br>Lion
+  							</li>
+ 							
+  						</ul>
+					</div>
+                                </div>
+				<br/>
+				<div class="submit-row text-center">
+					<button type="submit" id="submit" tabindex="5" class="btn btn-md btn-primary btn-outlined">Submit
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block scripts %}
+	<script src="{{ request.script_root }}/themes/{{ ctf_theme() }}/static/js/style.js"></script>
+{% endblock %}
