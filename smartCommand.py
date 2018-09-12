@@ -16,7 +16,7 @@ class SmartTable():
 		return self.color
 	def getImage(self):
 		return self.image
-	def getBuilding(self):
+	def getIdList(self):
 		return self.building
 
 def createSmartCityTableSession(session):
@@ -24,7 +24,7 @@ def createSmartCityTableSession(session):
         # API_URL = 'http://127.0.0.1:9080/api'
 	request = ""	
  	
-	id = session.getBuilding()
+	idList = session.getIdList()
         query = """
         mutation UpdateBuildings($input: [BuildingInput]!) {
        	updateBuildings(input: $input) {
@@ -33,15 +33,15 @@ def createSmartCityTableSession(session):
         }
        	}
        	"""
-
-	if id in ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]:
-		lightsCommand(session, API_URL)
+        for id in idList:
+		if id in ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]:
+			lightsCommand(session, API_URL)
 	
-	elif id in ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]:
-		oledCommand(session,  API_URL)	
-        buildings = [
-               	{"id": session.getBuilding(), "mode": session.getColor()},
-       	]
+		elif id in ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]:
+			oledCommand(session,  API_URL)	
+      	  	buildings = [
+               		{"id": id, "mode": session.getColor()},
+       		]
 
         variables = {'input': buildings}
         json = {'query': query, 'variables': variables}
@@ -162,3 +162,4 @@ def trafficLightsCommand(session, API_URL):
 	trafficLights = [
 		{"id"}
 	]
+

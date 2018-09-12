@@ -288,8 +288,7 @@ def register_smart():
 	
 	if not color in teamColors:
 		color = "RED"
-	print("Color is " + color) 
-	print("Image is " + image)
+
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
@@ -330,9 +329,8 @@ def register_smart():
                 db.session.commit()
                 db.session.flush()
 	
-		
-	
-		smart_team = SmartCityTeam(team.id ,team.name, color, image)
+			
+		smart_team = SmartCityTeam(team.id,team.name, color, image)
 		db.session.add(smart_team)
 		db.session.commit()
 		db.session.flush()
@@ -424,11 +422,12 @@ def chal_custom(chalid):
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
 		
 		if not utils.is_admin():
-			smart_color = SmartCityTeam.query.filter_by(id=session['id']).first().color
+			smart_color = SmartCityTeam.query.filter_by(teamId=session['id']).first().color
 			smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
-			smart_image = SmartCityTeam.query.filter_by(id=session['id']).first().image
-			smartSession = SmartTable(smart_buildingId, smart_color, smart_image)
-                	createSmartCityTableSession(smartSession)
+			smart_image = SmartCityTeam.query.filter_by(teamId=session['id']).first().image
+			print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(smart_buildingId))
+			#smartSession = SmartTable(smart_buildingId, smart_color, smart_image)
+                	#createSmartCityTableSession(smartSession)
 
                 return jsonify({'status': 1, 'message': message})
             else:  # The challenge plugin says the input is wrong
@@ -568,6 +567,47 @@ def delete_team_custom(teamid):
     else:
 	return '1'
 
+
+@admin_teams.route('/admin/teams', defaults={'page': '1'})
+@admin_teams.route('/admin/teams/<int:page>')
+@admins_only
+def admin_teams_view_custom(page):
+    q = request.args.get('q')
+    print(request.args)
+    if q:
+        field = request.args.get('field')
+        teams = []
+        errors = []
+        if field == 'id':
+            if q.isnumeric():
+                teams = Teams.query.filter(Teams.id == q).order_by(Teams.id.asc()).all()
+            else:
+                teams = []
+                errors.append('Your ID search term is not numeric')
+        elif field == 'name':
+            teams = Teams.query.filter(Teams.name.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+	elif field == 'color':
+            teams = SmartCityTeam.query.filter(SmartCityTeam.color.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        elif field == 'email':
+            teams = Teams.query.filter(Teams.email.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        elif field == 'affiliation':
+            teams = Teams.query.filter(Teams.affiliation.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        elif field == 'country':
+            teams = Teams.query.filter(Teams.country.like('%{}%'.format(q))).order_by(Teams.id.asc()).all()
+        return render_template('admin/teams.html', teams=teams, pages=None, curr_page=None, q=q, field=field)
+
+
+    page = abs(int(page))
+    results_per_page = 50
+    page_start = results_per_page * (page - 1)
+    page_end = results_per_page * (page - 1) + results_per_page
+    teams = Teams.query.order_by(Teams.id.asc()).slice(page_start, page_end).all()
+    count = db.session.query(db.func.count(Teams.id)).first()[0]
+    pages = int(count / results_per_page) + (count % results_per_page > 0)
+    smart_teams = SmartCityTeam.query.order_by(SmartCityTeam.id.asc()).slice(page_start, page_end).all()
+    return render_template('admin/teams.html', teams=zip(teams, smart_teams), pages=pages, curr_page=page)
+
+
 def load(app):
     """load overrides for smart_city to work properly"""
     logger.setLevel(app.logger.getEffectiveLevel())
@@ -584,4 +624,5 @@ def load(app):
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['admin_teams.delete_team'] = delete_team_custom
-    app.view_functions['admin_teams.admin_create_team'] = admin_create_team_custom 
+    app.view_functions['admin_teams.admin_create_team'] = admin_create_team_custom
+    app.view_functions['admin_teams.admin_teams_view'] = admin_teams_view_custom 

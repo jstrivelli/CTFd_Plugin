@@ -386,6 +386,7 @@ html, body {
 						</td>
 						<td class="text-center"><b>Team</b>
 						</td>
+						<td class="text-center"><b>Color</b></td>
 						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
 						</td>
 						<td class="d-none"><b>Website</b>
@@ -405,11 +406,12 @@ html, body {
 					</tr>
 				</thead>
 				<tbody>
-					{% for team in teams %}
+					{% for team, smart_team in range(len(teams)) %}
 					<tr name="{{ team.id }}">
-						<td class="team-id" value="{{ team.id }}">{{ team.id }}</td>
+						<td class="team-id" value="{{ teams[team].id }}">{{ teams[team].id }}</td>
 						<td class="team-name" value="{{ team.name }}"><a href="{{ request.script_root }}/admin/team/{{ team.id }}">{{ team.name | truncate(32) }}</a>
 						</td>
+						<td class="team-color" value="{{ smart_team.color }}"> {{ (smart_team-1).color }} </td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
 						<td class="team-website d-none text-center">
 							{% if team.website %}
@@ -458,6 +460,7 @@ html, body {
 						</span>
 						</td>
 					</tr>
+		
 					{% endfor %}
 				</tbody>
 			</table>
