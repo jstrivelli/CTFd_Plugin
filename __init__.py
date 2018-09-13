@@ -2,8 +2,8 @@ import os
 import logging
 import time
 from flask import render_template, jsonify
-from CTFd.utils import admins_only, is_admin, ratelimit, override_template
-from CTFd.models import db, Challenges, Keys, Awards, Solves, Files, Tags, Teams, WrongKeys, DatabaseError, Unlocks, Tracking
+from CTFd.utils import admins_only, is_admin, ratelimit, override_template, cache
+from CTFd.models import db, Challenges, Keys, Awards, Solves, Files, Tags, Teams, WrongKeys, DatabaseError, Unlocks, Tracking, Pages
 from CTFd import utils
 from logging import getLogger, basicConfig,DEBUG,ERROR
 from CTFd.plugins import challenges, register_plugin_assets_directory
@@ -34,14 +34,16 @@ class SmartCityTeam(db.Model):
 	#name = db.Column(db.String(128), unique=True)
 	#email = db.Column(db.String(124), unique=True)
 	teamId = db.Column(db.String(128))
-	color = db.Column(db.String(123))
+	color = db.Column(db.String(128))
 	image = db.Column(db.Integer)
+	#school = db.Column(db.String(128))
 	def __init__(self, teamId, name, color, image):
 		#self.name = name
 		self.teamId = teamId
 		self.name = name
 		self.color = color
 		self.image = image 
+		#self.school = school
 
 
 
@@ -286,10 +288,11 @@ def register_smart():
 	color = request.form['color']
 	#school = request.form['school']
 	image = request.form['image']
-	
+	#school = request.form['school']
 	if not color in teamColors:
 		color = "RED"
-
+	#if len(school) > 120:
+	#	school = " "
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
@@ -608,6 +611,27 @@ def admin_teams_view_custom(page):
     smart_teams = SmartCityTeam.query.order_by(SmartCityTeam.id.asc()).slice(page_start, page_end).all()
     return render_template('admin/teams.html', teams=zip(teams, smart_teams), pages=pages, curr_page=page)
 
+@views.route('/teams', defaults={'page': '1'})
+@views.route('/teams/<int:page>')
+def teams_custom(page):
+    if utils.get_config('workshop_mode'):
+        abort(404)
+    page = abs(int(page))
+    results_per_page = 50
+    page_start = results_per_page * (page - 1)
+    page_end = results_per_page * (page - 1) + results_per_page
+
+    if utils.get_config('verify_emails'):
+        count = Teams.query.filter_by(verified=True, banned=False).count()
+        teams = Teams.query.filter_by(verified=True, banned=False).slice(page_start, page_end).all()
+    else:
+        count = Teams.query.filter_by(banned=False).count()
+        teams = Teams.query.filter_by(banned=False).slice(page_start, page_end).all()
+    pages = int(count / results_per_page) + (count % results_per_page > 0)
+    smart_teams = []
+    for team in teams:
+	smart_teams.append(SmartCityTeam.query.filter_by(teamId=team.id).first())
+    return render_template('teams.html', teams=zip(teams, smart_teams), team_pages=pages, curr_page=page)
 
 
 @views.route('/setup', methods=['GET', 'POST'])
@@ -717,13 +741,18 @@ def load(app):
     dir_path = os.path.dirname(os.path.realpath(__file__))
     template_path = os.path.join(dir_path, 'new-register.html')
     override_template('register.html', open(template_path).read())
-    template_path = os.path.join(dir_path, 'new-team.html') 
+    template_path = os.path.join(dir_path, 'new-admin-team.html') 
     override_template('admin/teams.html', open(template_path).read())
     template_path = os.path.join(dir_path, 'new-setup.html')
     override_template('setup.html', open(template_path).read())
+    template_path = os.path.join(dir_path, 'new-team.html')
+    override_template('teams.html', open(template_path).read())
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['admin_teams.delete_team'] = delete_team_custom
     app.view_functions['admin_teams.admin_create_team'] = admin_create_team_custom
     app.view_functions['admin_teams.admin_teams_view'] = admin_teams_view_custom
-    app.view_functions['views.setup'] = setup_custom 
+    app.view_functions['views.setup'] = setup_custom
+    app.view_functions['views.teams'] = teams_custom
+
+ 
