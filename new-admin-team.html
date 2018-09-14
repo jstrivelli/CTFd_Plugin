@@ -388,6 +388,7 @@ html, body {
 						</td>
 						<td class="text-center"><b>Color</b></td>
 						<td class="text-center"><b>Image</b></td>
+						<td class="text-center"><b>School</b></td>
 						<td class="d-none d-md-table-cell d-lg-table-cell text-center"><b>Email</b>
 						</td>
 						<td class="d-none"><b>Website</b>
@@ -414,6 +415,7 @@ html, body {
 						</td>
 						<td class="team-color" value="{{ smart_team.color }}"> {{ smart_team.color }} </td>
 						<td class="team-image" value="{{ smart_team.image }}"> {{ smart_team.image }} </td>
+						<td class="team-school" value="{{ smart_team.school }}"> {{smart_team.school }} </td>
 						<td class="team-email d-none d-md-table-cell d-lg-table-cell" value="{{ team.email }}">{{ team.email | truncate(32) }}</td>
 						<td class="team-website d-none text-center">
 							{% if team.website %}
@@ -425,7 +427,7 @@ html, body {
 						</td>
 						<td class="team-affiliation d-none" value="{{ team.affiliation if team.affiliation is not none }}">
 							<span>{% if team.affiliation %}{{ team.affiliation | truncate(20) }}{% endif %}</span>
-						</td>
+						'</td>
 						<td class="team-country d-none" value="{{ team.country if team.country is not none }}">
 							<span>{% if team.country %}{{ team.country }}{% endif %}</span>
 						</td>

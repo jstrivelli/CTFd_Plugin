@@ -30,11 +30,11 @@ teamColors = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS'
 class SmartCityTeam(db.Model):
 	_mapper_args__ = {'polymorphic_identity': 'smart_city'}
 	id = db.Column(db.Integer, primary_key=True)
-	#name = db.Column(db.String(128), unique=True)
+	name = db.Column(db.String(128), unique=True)
 	teamId = db.Column(db.String(128))
 	color = db.Column(db.String(128))
 	image = db.Column(db.Integer)
-	#school = db.Column(db.String(128))
+	school = db.Column(db.String(128))
 	def __init__(self, teamId, name, color, image, school):
 		self.teamId = teamId
 		self.name = name
@@ -606,6 +606,8 @@ def admin_teams_view_custom(page):
     count = db.session.query(db.func.count(Teams.id)).first()[0]
     pages = int(count / results_per_page) + (count % results_per_page > 0)
     smart_teams = SmartCityTeam.query.order_by(SmartCityTeam.id.asc()).slice(page_start, page_end).all()
+    for smart_team in smart_teams:
+	print(str(smart_team.name))
     return render_template('admin/teams.html', teams=zip(teams, smart_teams), pages=pages, curr_page=page)
 
 @views.route('/teams', defaults={'page': '1'})
