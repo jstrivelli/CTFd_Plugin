@@ -29,21 +29,18 @@ teamColors = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS'
 
 class SmartCityTeam(db.Model):
 	_mapper_args__ = {'polymorphic_identity': 'smart_city'}
-	#name = db.Column(None, db.ForeignKey('teams.name'), primary_key=Truep
 	id = db.Column(db.Integer, primary_key=True)
 	#name = db.Column(db.String(128), unique=True)
-	#email = db.Column(db.String(124), unique=True)
 	teamId = db.Column(db.String(128))
 	color = db.Column(db.String(128))
 	image = db.Column(db.Integer)
 	#school = db.Column(db.String(128))
-	def __init__(self, teamId, name, color, image):
-		#self.name = name
+	def __init__(self, teamId, name, color, image, school):
 		self.teamId = teamId
 		self.name = name
 		self.color = color
 		self.image = image 
-		#self.school = school
+		self.school = school
 
 
 
@@ -286,13 +283,13 @@ def register_smart():
         email = request.form['email']
         password = request.form['password']
 	color = request.form['color']
-	#school = request.form['school']
+	school = request.form['school']
 	image = request.form['image']
 	#school = request.form['school']
 	if not color in teamColors:
 		color = "RED"
-	#if len(school) > 120:
-	#	school = " "
+	if len(school) > 120:
+		school = " "
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
@@ -334,7 +331,7 @@ def register_smart():
                 db.session.flush()
 	
 			
-		smart_team = SmartCityTeam(team.id,team.name, color, image)
+		smart_team = SmartCityTeam(team.id,team.name, color, image, school)
 		db.session.add(smart_team)
 		db.session.commit()
 		db.session.flush()
@@ -658,7 +655,7 @@ def setup_custom():
             color = request.form['color']
             image = request.form['image']
 
-	    admin_smart = SmartCityTeam(admin.id, name, color, image)
+	    admin_smart = SmartCityTeam(admin.id, name, color, image, " ")
 
             # Index page
 
