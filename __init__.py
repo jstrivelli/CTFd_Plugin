@@ -484,7 +484,7 @@ def admin_create_team_custom():
     email = request.form.get('email', None)
     color = request.form.get('color', None)
     image = request.form.get('image', None)
-
+    school = request.form.get('school',None)
     if not color in teamColors:
 	color = "RED"
 
@@ -541,7 +541,7 @@ def admin_create_team_custom():
     db.session.add(team)
     db.session.commit()
 
-    smart_team = SmartCityTeam(team.id, name, color, image)
+    smart_team = SmartCityTeam(team.id, name, color, image, school)
     db.session.add(smart_team)
     db.session.commit()
     db.session.close()
