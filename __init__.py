@@ -15,7 +15,7 @@ from  passlib.hash import bcrypt_sha256
 from CTFd.utils.decorators import authed_only, during_ctf_time_only, viewable_without_authentication
 from CTFd.plugins.challenges import get_chal_class
 from werkzeug.routing import Rule
-from .smartCommand import SmartTable, createSmartCityTableSession
+from .smartCommand import SmartTable, createSmartCityTableSession2
 
 admin_teams = Blueprint('admin_teams', __name__)
 auth = Blueprint('auth', __name__)
@@ -423,12 +423,17 @@ def chal_custom(chalid):
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
 		
 		if not utils.is_admin():
-			smart_color = SmartCityTeam.query.filter_by(teamId=session['id']).first().color
-			smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
-			smart_image = SmartCityTeam.query.filter_by(teamId=session['id']).first().image
-			print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(smart_buildingId))
-			#smartSession = SmartTable(smart_buildingId, smart_color, smart_image)
-                	#createSmartCityTableSession(smartSession)
+			print(session['id'])
+                        smart_color = SmartCityTeam.query.filter_by(teamId=session['id']).first().color
+                        smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
+                        smart_image = SmartCityTeam.query.filter_by(teamId=session['id']).first().image
+                        smart_buildingList = [s.encode for s in list(smart_buildingId)]
+                        print(type(smart_buildingId))
+                        print(smart_buildingList)
+                        print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(smart_buildingId))
+                        smartSession = SmartTable(smart_buildingId, smart_color, smart_image)
+                        createSmartCityTableSession2(smartSession)
+
 
                 return jsonify({'status': 1, 'message': message})
             else:  # The challenge plugin says the input is wrong

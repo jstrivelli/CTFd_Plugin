@@ -5,6 +5,12 @@ from subprocess import STDOUT, check_output
 #output = check_output(cmd, stderr=STDOUT, timeout=seconds)
 API_URL = 'http://192.168.2.25:9080/api'
 
+oledList = ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]
+lightsList = ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]
+towerList = ["S1_T1", "S1_T2", "S2_T1", "S4_T1"]
+trafficLightsList = ["WEST_EAST","NORTH_SOUTH"]
+
+
 class SmartTable():
        
         def __init__(self, building, color, image):
@@ -18,6 +24,17 @@ class SmartTable():
 		return self.image
 	def getIdList(self):
 		return self.building
+
+
+
+def createSmartCityTableSession2(session):
+	request = ""
+	idList = session.getIdList()
+	color = session.getColor()
+	image = session.getImage()
+
+		
+	
 
 def createSmartCityTableSession(session):
 
@@ -64,6 +81,8 @@ def createSmartCityTableSession(session):
 		request = requests.post(API_URL, json=json)
         else:
                 raise Exception(request.status_code)
+
+
 
 
 def lightsCommand(session, API_URL):
