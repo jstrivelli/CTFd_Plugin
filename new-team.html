@@ -18,6 +18,7 @@
 						<td><b>Team</b></td>
 						<td><b>Color</b></td>
 						<td><b>Image</b></td>
+						<td><b>School</b></td>
 						
 					</tr>
 				</thead>
@@ -34,6 +35,7 @@
 						
 						<td class="team-color" value="{{ smart_team.color }}"> {{ (smart_team).color }} </td>
 						<td class="team-image" value="{{ smart_team.image }}"> {{ smart_team.image }} </td>
+						<td class="team-school" value="{{ smart_team.school }}"> {{ smart_team.school }} </td>
 						<td class="text-center" style="width: 10px;">
 							{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}
 								<a href="{{ team.website }}" target="_blank">

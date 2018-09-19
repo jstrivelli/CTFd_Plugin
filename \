@@ -424,15 +424,12 @@ def chal_custom(chalid):
                 logger.info("[{0}] {1} submitted {2} with kpm {3} [CORRECT]".format(*data))
 		
 		if "SmartCity" in str(chal_class):
-			print(session['id'])
                         smart_color = SmartCityTeam.query.filter_by(teamId=session['id']).first().color
                         smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
                         smart_image = SmartCityTeam.query.filter_by(teamId=session['id']).first().image
                         b = smart_buildingId.split('\', \'')
 			b[0] = b[0][2:]
 			b[-1] = b[-1][:-2]
-			for i in b:
-				print(i)
                         print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(b))
                         smartSession = SmartTable(b, smart_color, smart_image)
                         createSmartCityTableSession2(smartSession)
