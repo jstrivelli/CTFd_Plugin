@@ -33,8 +33,11 @@ def createSmartCityTableSession2(session):
 	color = session.getColor()
 	image = session.getImage()
 
+	queryList = similarList(idList, towerList)
 		
-	
+		
+def similarList(a, b):
+	return list(set(a) - (set(a) - set(b)))
 
 def createSmartCityTableSession(session):
 

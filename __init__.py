@@ -294,7 +294,7 @@ def register_smart():
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
-        smart_colors = SmartCityTeam.query.add_columns('color').filter_by(color=color).first()
+	smart_color = SmartCityTeam.query.filter_by(color=color).first()
 	smart_image = SmartCityTeam.query.add_columns('image').filter_by(image=image).first()
 	#challenge = SmartCityChallenge.query.filter_by(id=challenge.id).first()
 	pass_short = len(password) == 0
@@ -302,6 +302,7 @@ def register_smart():
         valid_email = utils.check_email_format(request.form['email'])
         team_name_email_check = utils.check_email_format(name)
 
+        	
 
         if not valid_email:
             errors.append("Please enter a valid email address")
@@ -317,8 +318,9 @@ def register_smart():
             errors.append('Pick a shorter password')
         if name_len:
             errors.append('Pick a longer team name')
-	if smart_colors:
-            errors.append('The following colors are available:  \n' + getAvailableColors())
+	if smart_color:
+	    if not Teams.query.filter_by(id=smart_color.teamId).first().admin:
+            	errors.append('Color unavailable. The following colors are available:  \n' + getAvailableColors())
 	if smart_image:
             errors.append('That image is already taken')
 
@@ -431,8 +433,6 @@ def chal_custom(chalid):
                         b = smart_buildingId.split('\', \'')
 			b[0] = b[0][2:]
 			b[-1] = b[-1][:-2]
-			for i in b:
-				print(i)
                         print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(b))
                         smartSession = SmartTable(b, smart_color, smart_image)
                         createSmartCityTableSession2(smartSession)

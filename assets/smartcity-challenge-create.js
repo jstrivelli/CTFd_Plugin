@@ -90,6 +90,26 @@ var arr = [
 {val : 'S5_B02', text: 'S5_B02'},
 {val : 'S5_B03', text: 'S5_B03'},
 {val : 'S5_B04', text: 'S5_B04'},
+{val : 'OLED_1', text: 'OLED_1'},
+{val : 'OLED_2', text: 'OLED_2'},
+{val : 'OLED_3', text: 'OLED_3'},
+{val : 'OLED_4', text: 'OLED_4'},
+{val : 'OLED_5', text: 'OLED_5'},
+{val : 'OLED_6', text: 'OLED_6'},
+{val : 'OLED_7', text: 'OLED_7'},
+{val : 'OLED_8', text: 'OLED_8'},
+{val : 'OLED_9', text: 'OLED_9'},
+{val : 'S1_T1', text: 'S1_T1'},
+{val : 'S1_T2', text: 'S1_T2'},
+{val : 'S2_T1', text: 'S2_T1'},
+{val : 'S4_T1', text: 'S4_T1'},
+{val : 'MARINA', text: 'MARINA'},
+{val : 'STREET_LIGHT', text: 'STREET_LIGHT'},
+{val : 'TRAIN_STATION', text: 'TRAIN_STATION'},
+{val : 'WEST_EAST', text: 'WEST_EAST'},
+{val : 'NORTH_SOUTH', text: 'NORTH_SOUTH'},
+{val : 'WINDMILL', text: 'WINDMILL'},
+{val : 'UTILITY_POLE', text: 'UTILITY_POLE'}
 ];
 
 var i = 0;
