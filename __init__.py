@@ -671,7 +671,7 @@ def setup_custom():
 
             index = """<div class="row">
     <div class="col-md-6 offset-md-3">
-        <img class="w-100 mx-auto d-block" style="max-width: 500px;padding: 50px;padding-top: 14vh;" src="themes/core/static/img/logo.png" />
+        
         <h3 class="text-center">
             <p>A cool CTF platform from <a href="https://ctfd.io">ctfd.io</a></p>
             <p>Follow us on social media:</p>
@@ -754,6 +754,8 @@ def load(app):
     override_template('setup.html', open(template_path).read())
     template_path = os.path.join(dir_path, 'new-team.html')
     override_template('teams.html', open(template_path).read())
+    template_path = os.path.join(dir_path, 'new-base.html')
+    override_template('base.html', open(template_path).read())
     app.view_functions['auth.register'] = register_smart 
     app.view_functions['challenges.chal'] = chal_custom
     app.view_functions['admin_teams.delete_team'] = delete_team_custom

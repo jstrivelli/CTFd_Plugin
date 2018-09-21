@@ -28,16 +28,33 @@ class SmartTable():
 
 
 def createSmartCityTableSession2(session):
-	request = ""
+	queryString = """mutation{{
+		
+	"""
 	idList = session.getIdList()
 	color = session.getColor()
 	image = session.getImage()
 
+	i = 1
 	queryList = similarList(idList, towerList)
-		
+        if queryList:
+		queryString = towerQueryGenerate(queryList, queryString, color, image, i)
+		i = i+1
+
+
+	
+	queryString += "}}"		
+	print(queryString)
 		
 def similarList(a, b):
 	return list(set(a) - (set(a) - set(b)))
+
+
+def towerQueryGenerate(queryList, queryString, color, image, i):
+	stringified = "["
+	queryString += "m" + str(i) + ": updateTowers(input: {{"
+	
+	return queryString
 
 def createSmartCityTableSession(session):
 
