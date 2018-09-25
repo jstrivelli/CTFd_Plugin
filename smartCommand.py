@@ -28,7 +28,7 @@ class SmartTable():
 
 
 def createSmartCityTableSession2(session):
-	queryString = """mutation{{
+	queryString = """mutation{
 		
 	"""
 	idList = session.getIdList()
@@ -38,167 +38,78 @@ def createSmartCityTableSession2(session):
 	i = 1
 	queryList = similarList(idList, towerList)
         if queryList:
-		queryString = towerQueryGenerate(queryList, queryString, color, image, i)
+		queryString = towerQueryGenerate(queryList, queryString, color, image, i, "ON")
 		i = i+1
-
-
-	
-	queryString += "}}"		
+		
+	queryList = similarList(idList, ["WINDMILL"])
+	if queryList:
+		queryString = windmillQueryGenerate(queryList, queryString, color, image, i, "ON")
+		i = i+1
+		queryString = windmillQueryFlagsGenerate(queryList, queryString, color, image, i)
+		i += 1
+	queryList = similarList(idList, ["UTILITY_POLE"])
+	if queryList:
+		queryString = utilityPoleQueryGenerate(queryList, queryString, color, image, i)
+		i += 1
+	queryList = similarList(idList, lightsList)
+	if queryList:
+		queryString = lightsQueryGenerate(queryList, queryString, color, image, i, "ON")
+		i += 1
+	queryList = similarList(idList, oledList)
+	if queryList:
+		queryString = oledQueryGenerate(queryList, queryString, color, image, i)
+		i += 1
+	queryString = queryString + "}"		
 	print(queryString)
 		
-def similarList(a, b):
+def similarList(a, b):	
 	return list(set(a) - (set(a) - set(b)))
 
 
-def towerQueryGenerate(queryList, queryString, color, image, i):
+def oledQueryGenerate(queryList, queryString, color, image, i):
+	queryString += "m" + str(i) + ": updateOleds(input: {"
 	stringified = "["
-	queryString += "m" + str(i) + ": updateTowers(input: {{"
+	for building_id in queryList:
+		temp = "{id: {" + building_id + "}, mode {" + mode + ", image: " + image + "}," 
+		stringified = += temp
+	stringified += "]) {id mode image }}"
+	queryString += stringified
+	return queryString
+
+def lightsQueryGenerate(queryList, queryString, color, image, i, mode):
+        queryString += "m" + str(i) + ": updateLights(input: "
+        stringified = "["
+        for building_id in queryList:
+                temp = "{id: {" + building_id+ "}, mode: {" + mode + "}},"
+                stringified += temp
+        stringified += "]"
+        queryString = queryString + stringified + ") { id mode }, "
+        return queryString
 	
 	return queryString
 
-def createSmartCityTableSession(session):
+def utilityPoleQueryGenerate(queryList, queryString, color, image, i):
+	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: { PURPLE }){color}, "
+	return queryString + utilityString
 
-        # API_URL = 'http://127.0.0.1:9080/api'
-	request = ""	
- 	
-	idList = session.getIdList()
-        query = """
-        mutation UpdateBuildings($input: [BuildingInput]!) {
-       	updateBuildings(input: $input) {
-                id
-               	mode
-        }
-       	}
-       	"""
-        for id in idList:
-		if id in ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]:
-			lightsCommand(session, API_URL)
+def windmillQueryGenerate(queryList, queryString, color, image, i, mode):
+	windmillString = "m" + str(i) + ": updateWindmills(input: { mode: {" + mode + "} ledMode: {SOLID}}) { mode }, " 
+        queryString += windmillString
+	return queryString
+
+def windmillQueryFlagsGenerate(queryList, queryString, color, image, i):
+	windmillFlagString = "m" + str(i) + ": addWindMillFlags{input: [ icon: " + image + ", rgb: " + color + "}]){ icon rgb }"
+	return queryString + windmillFlagString
 	
-		elif id in ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]:
-			oledCommand(session,  API_URL)	
-      	  	buildings = [
-               		{"id": id, "mode": session.getColor()},
-       		]
-
-        variables = {'input': buildings}
-        json = {'query': query, 'variables': variables}
-
-        # usage without auth token
-        print("Sending request for " + session.getBuilding() + " with color " + session.getColor())
-			
-	request = requests.post(API_URL, json=json)
-		
-	if request.status_code == 200:
-                response = request.json()
-                print('response', response)
-		time.sleep(7)
-		print("WE ARE SITTING AFTER THE TIMER")
-		buildings = [
-			{"id": session.getBuilding(), "mode":"WHITE"},
-		]
-		variables = {'input':buildings}
-		json = {'query':query, 'variables': variables}
-		request = requests.post(API_URL, json=json)
-        else:
-                raise Exception(request.status_code)
-
-
-
-
-def lightsCommand(session, API_URL):
-	query = """
-		mutation {
-  		updateLights(input: [
-    		{ id: STREET_LIGHT, mode: OFF },
-    		{ id: TRAIN_STATION, mode: ON }
-  		]) {
-    			id
-    			mode
-  		}
-		}
-	"""
-	lights = [
-		{"id": session.getBuilding(), "mode": "ON"}
-	]
-	variables = {'input': lights}
-	json = {'query' : query, 'variables': variables}
-	
-	print("Sending request for " + session.getBuilding() + " to be turned ON ")
-	
-	request = requests.post(API_URL, json=json)
-	if request.status_code == 200:
-		response = request.json()
-		print('response', response)
-		time.sleep(20)
-		lights=  [
-			{"id": session.getBuilding(), "mode": "OFF"}
-		]
-		variables = {'input': lights}
-		json = {'query' : query, 'variables': variables}
-		request = requests.post(API_URL, json=json)
-	else:
-		raise Exception(request.status_code)
-
-
-def oledCommand(session, API_URL):
-	query = """
-	mutation {
-  		updateOleds(input: [
-    		{ id: OLED_1, mode: OFF, image: MURRAY_1 },
-    		{ id: OLED_2, mode: ON, image: MURRAY_2 },
-    		{ id: OLED_3, mode: OFF, image: MURRAY_3 }
-  		]) {
-    		id
-    		mode
-    		image
-  		}
-	}
-	"""
-        oleds = [
-		{"id": session.getBuilding(), "mode": "ON", "image": session.getImage()}
-	]
-	variables = {'input': oleds}
-	json = {'query': query, 'variables': variables}
-
-	print("Sending request for " + session.getBuilding() + "to be turned ON with image " + session.getImage())
-	
-	request = requests.post(API_URL, json=json)
-	if requests.status_code == 200:
-		response = requests.json
-		print('response', response)
-		time.sleep(20)
-		oleds = [
-                	{"id": session.getBuilding(), "mode": "ON", "image": session.getImage()}
-        	]
-		variables = {'input' : oleds}
-		json = {'query': query, 'variab;les': variables}
-		request = requests.post(API_URL, json=json)
-	else:
-		raise Exception(requests.status_code)
-
-
-def trafficLightsCommand(session, API_URL):
-	query = """mutation {
-  		updateTrafficLights(input: {
-    		mode: MANUAL
-    		lights: [
-      		{ mode: ON, color: RED, direction: WEST_EAST },
-      		{ mode: ON, color: YELLOW, direction: WEST_EAST },
-      		{ mode: OFF, color: GREEN, direction: NORTH_SOUTH },
-      		{ mode: ON, color: YELLOW, direction: NORTH_SOUTH },
-    		]
-  		}) {
-    		mode
-    		lights {
-      		mode
-      		color
-      		direction
-    		}
-  		}
-		}
-
-	"""
-	trafficLights = [
-		{"id"}
-	]
+def towerQueryGenerate(queryList, queryString, color, image, i, mode):
+	stringified = "["
+	queryString += "m" + str(i) + ": updateTowers(input: "
+        stringified = "["
+	for building_id in queryList:
+    		temp = "{id: {" + building_id+ "}, mode: {" + mode + "}},"
+    		stringified += temp 
+	stringified += "]"
+        queryString = queryString + stringified + ") { id mode }, " 		
+	return queryString
+ 
 
