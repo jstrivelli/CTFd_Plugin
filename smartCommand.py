@@ -57,7 +57,7 @@ def createSmartCityTableSession2(session):
 		i += 1
 	queryList = similarList(idList, oledList)
 	if queryList:
-		queryString = oledQueryGenerate(queryList, queryString, color, image, i)
+		queryString = oledQueryGenerate(queryList, queryString, color, image, i, "ON")
 		i += 1
 	queryString = queryString + "}"		
 	print(queryString)
@@ -66,12 +66,12 @@ def similarList(a, b):
 	return list(set(a) - (set(a) - set(b)))
 
 
-def oledQueryGenerate(queryList, queryString, color, image, i):
+def oledQueryGenerate(queryList, queryString, color, image, i, mode):
 	queryString += "m" + str(i) + ": updateOleds(input: {"
 	stringified = "["
 	for building_id in queryList:
-		temp = "{id: {" + building_id + "}, mode {" + mode + ", image: " + image + "}," 
-		stringified = += temp
+		temp = "{id: {" + building_id + "}, mode: {" + mode + ", image: " + image + "}," 
+		stringified += temp
 	stringified += "]) {id mode image }}"
 	queryString += stringified
 	return queryString
