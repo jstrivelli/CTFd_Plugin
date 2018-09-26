@@ -9,7 +9,17 @@ oledList = ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7"
 lightsList = ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]
 towerList = ["S1_T1", "S1_T2", "S2_T1", "S4_T1"]
 trafficLightsList = ["WEST_EAST","NORTH_SOUTH"]
-
+buildingList = [
+"S1_B01", "S1_B02", "S1_B03", "S1_B04", "S1_B05","S2_B01", "S2_B02", "S2_B03", 
+"S2_B04", "S2_B05", "S2_B06", "S2_B07", "S2_B08","S2_B09", "S2_B10", "S2_B11", 
+"S2_B12", "S2_B13", "S2_B14", "S2_B15", "S2_B16","S2_B17", "S2_B18", "S2_B19", 
+"S2_B20", "S2_B21", "S2_B22", "S2_B23", "S2_B24","S2_B25", "S2_B26","S3_B01", 
+"S3_B02", "S3_B03", "S3_B04", "S3_B05", "S3_B06", "S3_B07", "S3_B08","S3_B09", 
+"S3_B10", "S3_B11", "S3_B12", "S3_B13", "S3_B14","S4_B01", "S4_B02", "S4_B03", 
+"S4_B04", "S4_B05", "S4_B06", "S4_B07", "S4_B08","S4_B09", "S4_B10", "S4_B11", 
+"S4_B12", "S4_B13", "S4_B14", "S4_B15", "S4_B16","S4_B17","S5_B01", "S5_B02", 
+"S5_B03", "S5_B04"
+]
 
 class SmartTable():
        
@@ -24,7 +34,6 @@ class SmartTable():
 		return self.image
 	def getIdList(self):
 		return self.building
-
 
 
 def createSmartCityTableSession2(session):
@@ -59,6 +68,10 @@ def createSmartCityTableSession2(session):
 	if queryList:
 		queryString = oledQueryGenerate(queryList, queryString, color, image, i, "ON")
 		i += 1
+	queryList = similarList(idList, buildingList)
+	if queryList:
+		queryString = buildingQueryGenerate(queryList, queryString, color, image, i)
+		i += 1
 	queryString = queryString + "}"		
 	print(queryString)
 	json = {'query': queryString}
@@ -75,6 +88,16 @@ def createSmartCityTableSession2(session):
 def similarList(a, b):	
 	return list(set(a) - (set(a) - set(b)))
 
+
+def buildingQueryGenerate(queryList, queryString, color, image, i):
+	queryString += "m" + str(i) + ": updateBuildingColors(input: "
+	stringified = "["
+	for building_id in queryList:
+		temp = "{id: " + building_id + ", rgb: " + color + "},"
+		stringified += temp
+	stringified += "}) { id },"
+	queryString += stringified
+	return queryString
 
 def oledQueryGenerate(queryList, queryString, color, image, i, mode):
 	queryString += "m" + str(i) + ": updateOleds(input: "
