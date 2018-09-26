@@ -95,7 +95,7 @@ def buildingQueryGenerate(queryList, queryString, color, image, i):
 	for building_id in queryList:
 		temp = "{id: " + building_id + ", rgb: " + color + "},"
 		stringified += temp
-	stringified += "}) { id },"
+	stringified += "]) { id rgb },"
 	queryString += stringified
 	return queryString
 
