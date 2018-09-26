@@ -32,19 +32,19 @@ def createSmartCityTableSession2(session):
 		
 	"""
 	idList = session.getIdList()
-	color = session.getColor()
+	color = colorRGB(session.getColor())
 	image = session.getImage()
 
 	i = 1
 	queryList = similarList(idList, towerList)
         if queryList:
-		queryString = towerQueryGenerate(queryList, queryString, color, image, i, "ON")
+		queryString = towerQueryGenerate(queryList, queryString, color, image, i, "SOLID")
 		i = i+1
 		
 	queryList = similarList(idList, ["WINDMILL"])
 	if queryList:
 		queryString = windmillQueryGenerate(queryList, queryString, color, image, i, "ON")
-		i = i+1
+		i += 1
 		queryString = windmillQueryFlagsGenerate(queryList, queryString, color, image, i)
 		i += 1
 	queryList = similarList(idList, ["UTILITY_POLE"])
@@ -61,18 +61,28 @@ def createSmartCityTableSession2(session):
 		i += 1
 	queryString = queryString + "}"		
 	print(queryString)
+	json = {'query': queryString}
+
+	request = requests.post(API_URL, json=json)
+
+	if request.status_code == 200:
+    		response = request.json()
+    		print('response', response)
+	else:
+    		raise Exception(request.status_code)
+	
 		
 def similarList(a, b):	
 	return list(set(a) - (set(a) - set(b)))
 
 
 def oledQueryGenerate(queryList, queryString, color, image, i, mode):
-	queryString += "m" + str(i) + ": updateOleds(input: {"
+	queryString += "m" + str(i) + ": updateOleds(input: "
 	stringified = "["
 	for building_id in queryList:
-		temp = "{id: {" + building_id + "}, mode: {" + mode + ", image: " + image + "}," 
+		temp = "{id: " + building_id + ", mode: " + mode + ", image: " + image + "}," 
 		stringified += temp
-	stringified += "]) {id mode image }}"
+	stringified += "]) {id mode image },"
 	queryString += stringified
 	return queryString
 
@@ -80,25 +90,24 @@ def lightsQueryGenerate(queryList, queryString, color, image, i, mode):
         queryString += "m" + str(i) + ": updateLights(input: "
         stringified = "["
         for building_id in queryList:
-                temp = "{id: {" + building_id+ "}, mode: {" + mode + "}},"
+                temp = "{id: " + building_id+ ", mode: " + mode + "},"
                 stringified += temp
         stringified += "]"
         queryString = queryString + stringified + ") { id mode }, "
         return queryString
 	
-	return queryString
 
 def utilityPoleQueryGenerate(queryList, queryString, color, image, i):
-	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: { PURPLE }){color}, "
+	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: PURPLE }){color},"
 	return queryString + utilityString
 
 def windmillQueryGenerate(queryList, queryString, color, image, i, mode):
-	windmillString = "m" + str(i) + ": updateWindmills(input: { mode: {" + mode + "} ledMode: {SOLID}}) { mode }, " 
+	windmillString = "m" + str(i) + ": updateWindmills(input: { mode: " + mode + " ledMode: SOLID}) { mode }, \n" 
         queryString += windmillString
 	return queryString
 
 def windmillQueryFlagsGenerate(queryList, queryString, color, image, i):
-	windmillFlagString = "m" + str(i) + ": addWindMillFlags{input: [ icon: " + image + ", rgb: " + color + "}]){ icon rgb }"
+	windmillFlagString = "m" + str(i) + ": createWindmillFlags(input: [{ icon: " + image + ", rgb: " + color + "},]){ icon rgb }"
 	return queryString + windmillFlagString
 	
 def towerQueryGenerate(queryList, queryString, color, image, i, mode):
@@ -106,10 +115,33 @@ def towerQueryGenerate(queryList, queryString, color, image, i, mode):
 	queryString += "m" + str(i) + ": updateTowers(input: "
         stringified = "["
 	for building_id in queryList:
-    		temp = "{id: {" + building_id+ "}, mode: {" + mode + "}},"
+    		temp = "{id: " + building_id+ ", mode: " + mode + "},"
     		stringified += temp 
 	stringified += "]"
         queryString = queryString + stringified + ") { id mode }, " 		
 	return queryString
  
-
+def colorRGB(color):
+	if color == "BLUE":
+		color = "\"0,255,0\""
+	elif color == "RED":
+		color = "\"255,0,0\""
+	elif color == "GREEN":
+		color = "\"0,0,255\""
+	elif color == "PURPLE":
+		color =  "\"255,0,255\""
+	elif color == "YELLOW":
+		color = "\"255,255,0\""
+	elif color == "AQUA":
+		color = "\"0,255,255\""
+	elif color == "WHITE":
+		color = "\"255,255,255\""
+	elif color == "GOLD":
+		color = "\"255,226,0\""
+	elif color == "TURQOIUS":
+		color = "\"0,255,109\""
+	elif color == "PINK":
+		color = "\"255,0,136\""
+	else:
+		color = "\"173,255,0\""
+ 	return color

@@ -24,7 +24,7 @@ views = Blueprint('views', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
 teamColors = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
-
+teamImages = ['HULK', 'CAPTAIN_AMERICA', 'BLACK_PANTHER', 'SPIDERMAN', 'GOMORA', 'DEADPOOL', 'GROOT', 'IRONMAN', 'ANGRY_WOLVERINE', 'THOR']
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 
 class SmartCityTeam(db.Model):
@@ -289,8 +289,8 @@ def register_smart():
 	#school = request.form['school']
 	if not color in teamColors:
 		color = "RED"
-	if len(school) > 120:
-		school = " "
+	if not image  in teamImages:
+		image = "HULK"
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
@@ -495,6 +495,8 @@ def admin_create_team_custom():
     school = request.form.get('school',None)
     if not color in teamColors:
 	color = "RED"
+    if not image in teamImages:
+	image = "HULK"
 
     admin_user = True if request.form.get('admin', None) == 'on' else False
     verified = True if request.form.get('verified', None) == 'on' else False
@@ -503,7 +505,6 @@ def admin_create_team_custom():
     smart_color = SmartCityTeam.query.add_columns('color').filter_by(color=color).first()
     smart_image = SmartCityTeam.query.add_columns('image').filter_by(image=image).first() 
 
-    print("Smart Color: " +str(smart_color))
        
     errors = []
 
