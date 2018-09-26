@@ -23,7 +23,7 @@ challenges2 = Blueprint('challenges', __name__)
 views = Blueprint('views', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
-teamColors = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
+teamColors = ['GREEN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
 teamImages = ['HULK', 'CAPTAIN_AMERICA', 'BLACK_PANTHER', 'SPIDERMAN', 'GOMORA', 'DEADPOOL', 'GROOT', 'IRONMAN', 'ANGRY_WOLVERINE', 'THOR']
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 

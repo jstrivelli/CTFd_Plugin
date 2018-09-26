@@ -3,7 +3,7 @@ import time
 from subprocess import STDOUT, check_output
 
 #output = check_output(cmd, stderr=STDOUT, timeout=seconds)
-API_URL = 'http://192.168.2.25:9080/api'
+API_URL = 'http://192.168.35.35:9080/api'
 
 oledList = ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]
 lightsList = ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]
@@ -146,11 +146,11 @@ def towerQueryGenerate(queryList, queryString, color, image, i, mode):
  
 def colorRGB(color):
 	if color == "BLUE":
-		color = "\"0,255,0\""
+		color = "\"0,0,255\""
 	elif color == "RED":
 		color = "\"255,0,0\""
 	elif color == "GREEN":
-		color = "\"0,0,255\""
+		color = "\"0,255,0\""
 	elif color == "PURPLE":
 		color =  "\"255,0,255\""
 	elif color == "YELLOW":
@@ -161,7 +161,7 @@ def colorRGB(color):
 		color = "\"255,255,255\""
 	elif color == "GOLD":
 		color = "\"255,226,0\""
-	elif color == "TURQOIUS":
+	elif color == "TURQUOIS":
 		color = "\"0,255,109\""
 	elif color == "PINK":
 		color = "\"255,0,136\""
