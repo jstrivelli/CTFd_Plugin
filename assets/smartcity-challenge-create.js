@@ -22,6 +22,49 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 });
 
+var soundArr = [
+{val : 'APPLAUSE', text: 'APPLAUSE'},
+{val : 'BABY_CRYING', text: 'BABY_CRYING'},
+{val : 'BEACH', text: 'BEACH'},
+{val : 'BEACH_BALL', text: 'BEACH_BALL'},
+{val : 'BIKE_BELL', text: 'BIKE_BELL'},
+{val : 'BINGO', text: 'BINGO'},
+{val : 'BOAT_HORN', text: 'BOAT_HORN'},
+{val : 'BREWING_COFFEE', text: 'BREWING_COFFEE'},
+{val : 'BUS', text: 'BUS'},
+{val : 'CAR_DRIVING', text: 'CAR_DRIVING'},
+{val : 'CAR_SOUND', text: 'CAR_SOUND'},
+{val : 'CAT_MEOWING', text: 'CAT_MEOWING'},
+{val : 'CHEERING', text: 'CHEERING'},
+{val : 'DENTIST_DRILL', text: 'DENTIST_DRILL'},
+{val : 'DINOSAUR', text: 'DINOSAUR'},
+{val : 'DOLPHIN', text: 'DOLPHIN'},
+{val : 'DOORBELL', text: 'DOORBELL'},
+{val : 'ELECTRICITY', text: 'ELECTRICITY'},
+{val : 'ELEVATOR_DING', text: 'ELEVATOR_DING'},
+{val : 'ENVELOPE_RUSTLING', text: 'ENVELOPE_RUSTLING'},
+{val : 'FIRE_TRUCK', text: 'FIRE_TRUCK'},
+{val : 'FOOD_SIZZLING', text: 'FOOD_SIZZLING'},
+{val : 'KEYBOARD_TYPING', text: 'KEYBOARD_TYPING'},
+{val : 'LASER_TAG', text: 'LASER_TAG'},
+{val : 'LAWNMOWER', text: 'LAWNMOWER'},
+{val : 'MOO', text: 'MOO'},
+{val : 'OMNINOUS_MUSIC', text: 'OMNINOUS_MUSIC'},
+{val : 'OVERTIMER', text: 'OVERTIMER'},
+{val : 'POWER_DRILL', text: 'POWER_DRILL'},
+{val : 'ROOSTER', text: 'ROOSTER'},
+{val : 'RUSTLING_LEAVES', text: 'RUSTLING_LEAVES'},
+{val : 'SEAGULLS', text: 'SEAGULLS'},
+{val : 'SEWAGE', text: 'SEWAGE'},
+{val : 'SHHHH', text: 'SHHHH'},
+{val : 'SIREN', text: 'SIREN'},
+{val : 'SLOT_MACHINE', text: 'SLOT_MACHINE'},
+{val : 'SLURPPING_STRAW', text: 'SLURPPING_STRAW'},
+{val : 'SODA_CAN', text: 'SODA_CAN'},
+{val : 'SPRINKLER', text: 'SPRINKLER'},
+{val : 'WATER', text: 'WATER'},
+]
+
 
 var arr = [
 {val : 'S1_B01', text: 'S1_B01'},
@@ -117,6 +160,13 @@ var sel = $('<select type=""number" class="form-control chal-buildingId" name="b
 $(arr).each(function() {
  sel.append($("<option>").attr('value',this.val).text(this.text));
  sel.append($(' <span class="input-group-btn"><button type="button" class="btn btn-default btn-add">+</button></span>'));
+});
+
+
+
+var sel = $('<select type=""number" class="form-control chal-soundId" name="soundId">').appendTo('.sound');
+$(soundArr).each(function() {
+ sel.append($("<option>").attr('value',this.val).text(this.text));
 });
 
 (function ($) {
