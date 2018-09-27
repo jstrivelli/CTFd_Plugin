@@ -47,9 +47,9 @@ class SmartCityTeam(db.Model):
 class SmartCityChallenge(Challenges):
 	__mapper_args__ = {'polymorphic_identity': 'smart_city'}
 	id = db.Column(None, db.ForeignKey('challenges.id'), primary_key=True)
-	buildingId = db.Column(db.String(5))
-
-	def __init__(self, name, description, value, category, buildingId, type): 
+	buildingId = db.Column(db.String(120))
+	soundId = db.Column(db.String(120))
+	def __init__(self, name, description, value, category, buildingId, soundId, type): 
 		self.name = name
 		self.description = description
 		self.value = value
@@ -57,7 +57,7 @@ class SmartCityChallenge(Challenges):
 		self.type = type
 		#smart_city Challenege value
 		self.buildingId = buildingId
-
+		self.soundId = soundId
 
 class SmartCity(challenges.BaseChallenge):
 	id = "smart_city"
@@ -100,6 +100,7 @@ class SmartCity(challenges.BaseChallenge):
 			description = request.form['description'],
 			value = request.form['value'],
 			buildingId = str(buildingListString),
+			soundId = request.form['soundId'],
 			type=request.form['chaltype']
 		
 		)
@@ -146,6 +147,7 @@ class SmartCity(challenges.BaseChallenge):
 			'hidden': challenge.hidden,
 			'max_attempts': challenge.max_attempts,
 			'buildingId': challenge.buildingId,
+			'soundId': challenge.soundId,
 			'type': challenge.type,
 			'type_data': {
 				'id': SmartCity.id,
