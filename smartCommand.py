@@ -48,6 +48,8 @@ def createSmartCityTableSession2(session):
 	image = session.getImage()
 	sound = session.getSound()
 
+
+	print(tableReset())
 	i = 1
 	queryList = similarList(idList, towerList)
         if queryList:
@@ -56,13 +58,13 @@ def createSmartCityTableSession2(session):
 		
 	queryList = similarList(idList, ["WINDMILL"])
 	if queryList:
-		queryString = windmillQueryGenerate(queryList, queryString, color, image, i, "ON")
+		queryString = windmillQueryGenerate(queryList, queryString, color, image, i, "ON", "SOLID")
 		i += 1
 		queryString = windmillQueryFlagsGenerate(queryList, queryString, color, image, i)
 		i += 1
 	queryList = similarList(idList, ["UTILITY_POLE"])
 	if queryList:
-		queryString = utilityPoleQueryGenerate(queryList, queryString, color, image, i)
+		queryString = utilityPoleQueryGenerate(queryList, queryString, "PURPLE", image, i)
 		i += 1
 	queryList = similarList(idList, lightsList)
 	if queryList:
@@ -90,7 +92,9 @@ def createSmartCityTableSession2(session):
 	queryString = queryString + "}"		
 	print(queryString)
 	json = {'query': queryString}
-
+	
+	time.sleep(10)
+	print("First Request Sent")
 	request = requests.post(API_URL, json=json)
 
 	if request.status_code == 200:
@@ -99,6 +103,11 @@ def createSmartCityTableSession2(session):
 	else:
     		raise Exception(request.status_code)
 	
+
+	time.sleep(25)
+	print("Reset Request Sent")
+
+	tableResetQueryGenerate()
 		
 def similarList(a, b):	
 	return list(set(a) - (set(a) - set(b)))
@@ -159,11 +168,11 @@ def lightsQueryGenerate(queryList, queryString, color, image, i, mode):
 	
 
 def utilityPoleQueryGenerate(queryList, queryString, color, image, i):
-	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: PURPLE }){color},\n"
+	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: " + color + " }){color},\n"
 	return queryString + utilityString
 
-def windmillQueryGenerate(queryList, queryString, color, image, i, mode):
-	windmillString = "m" + str(i) + ": updateWindmills(input: { mode: " + mode + " ledMode: SOLID}) { mode }, \n" 
+def windmillQueryGenerate(queryList, queryString, color, image, i, mode, ledMode):
+	windmillString = "m" + str(i) + ": updateWindmills(input: { mode: " + mode + ", ledMode: " + ledMode + "}) { mode }, \n" 
         queryString += windmillString
 	return queryString
 
@@ -182,6 +191,20 @@ def towerQueryGenerate(queryList, queryString, color, image, i, mode):
         queryString = queryString + stringified + ") { id mode }, \n"
 	return queryString
  
+def tableReset():
+	query = """mutation{
+
+	"""
+	color = "\"0,0,0\""
+	query = buildingQueryGenerate(buildingList, query, color, "REGINALD", 1)
+	query = oledQueryGenerate(oledList, query, color, "REGINALD", 2, "ON")
+	query = towerQueryGenerate(towerList, query, color, "REGINALD", 3, "OFF")
+	query = windmillQueryGenerate(["WINDMILL"], query, color, "REGINALD", 4, "OFF", "OFF")
+	query = utilityPoleQueryGenerate(["UTILITY_POLE"], query, "RED", "REGINALD", 5)
+	query = lightsQueryGenerate(lightsList, query, color, "REGINALD", 6, "OFF")
+	query += "}"
+	return query	
+
 def colorRGB(color):
 	if color == "BLUE":
 		color = "\"0,0,255\""
