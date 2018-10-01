@@ -150,7 +150,7 @@ def buildingFlagQueryGenerate(queryList, queryString, color, image, i):
 	for building_id in queryList:
 		temp = "{buildingId: " + building_id + ", rgb: " + color + ", icon: " + image + "},"
 		stringified += temp
-	stringified += "]) { buildingId rgb icon },\n" 
+	stringified += "]) { buildingId },\n" 
 	queryString += stringified
 	return queryString
 	
