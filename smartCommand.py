@@ -48,8 +48,6 @@ def createSmartCityTableSession2(session):
 	image = session.getImage()
 	sound = session.getSound()
 
-
-	print(tableReset())
 	i = 1
 	queryList = similarList(idList, towerList)
         if queryList:
@@ -105,10 +103,20 @@ def createSmartCityTableSession2(session):
 	
 
 	time.sleep(25)
+	
 	print("Reset Request Sent")
 
-	tableResetQueryGenerate()
+	queryString = tableReset()
+	json = {'query': queryString}
+	request = requests.post(API_URL, json=json)
+	
+	if request.status_code == 200:
+		response = request.json()
+		print('response', response)
+	else:
+		raise Exception(request.status_code)
 		
+	
 def similarList(a, b):	
 	return list(set(a) - (set(a) - set(b)))
 
