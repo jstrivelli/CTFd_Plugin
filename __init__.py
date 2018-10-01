@@ -431,12 +431,13 @@ def chal_custom(chalid):
 			print(session['id'])
                         smart_color = SmartCityTeam.query.filter_by(teamId=session['id']).first().color
                         smart_buildingId = SmartCityChallenge.query.filter_by(id=chalid).first().buildingId
+			smart_soundId = SmartCityChallenge.query.filter_by(id=chalid).first().soundId
                         smart_image = SmartCityTeam.query.filter_by(teamId=session['id']).first().image
                         b = smart_buildingId.split('\', \'')
 			b[0] = b[0][2:]
 			b[-1] = b[-1][:-2]
-                        print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(b))
-                        smartSession = SmartTable(b, smart_color, smart_image)
+                        print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(b) + "and sound " + smart_soundId)
+                        smartSession = SmartTable(b, smart_color, smart_image, smart_soundId)
                         createSmartCityTableSession2(smartSession)
 
 

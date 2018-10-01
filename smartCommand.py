@@ -23,10 +23,11 @@ buildingList = [
 
 class SmartTable():
        
-        def __init__(self, building, color, image):
+        def __init__(self, building, color, image, sound):
                 self.building = building
                 self.color = color
                 self.image = image
+		self.sound = sound
 
 	def getColor(self):
 		return self.color
@@ -34,6 +35,8 @@ class SmartTable():
 		return self.image
 	def getIdList(self):
 		return self.building
+	def getSound(self):
+		return self.sound
 
 
 def createSmartCityTableSession2(session):
@@ -43,6 +46,7 @@ def createSmartCityTableSession2(session):
 	idList = session.getIdList()
 	color = colorRGB(session.getColor())
 	image = session.getImage()
+	sound = session.getSound()
 
 	i = 1
 	queryList = similarList(idList, towerList)
@@ -64,6 +68,12 @@ def createSmartCityTableSession2(session):
 	if queryList:
 		queryString = lightsQueryGenerate(queryList, queryString, color, image, i, "ON")
 		i += 1
+		if "TRAIN_STATION" in idList:
+			queryString = trainStationFlagQueryGenerate(queryList, queryString, color, image, i)
+			i += 1
+		if "MARINA" in idList:
+			queryString = marinaFlagQueryGenerate(queryList, queryString, color, image, i)
+			i += 1
 	queryList = similarList(idList, oledList)
 	if queryList:
 		queryString = oledQueryGenerate(queryList, queryString, color, image, i, "ON")
@@ -71,6 +81,11 @@ def createSmartCityTableSession2(session):
 	queryList = similarList(idList, buildingList)
 	if queryList:
 		queryString = buildingQueryGenerate(queryList, queryString, color, image, i)
+		i += 1
+		queryString = buildingFlagQueryGenerate(queryList, queryString, color, image, i)
+		i += 1
+	if sound:
+		queryString = soundQueryGenerate(sound, queryString, i)
 		i += 1
 	queryString = queryString + "}"		
 	print(queryString)
@@ -88,6 +103,19 @@ def createSmartCityTableSession2(session):
 def similarList(a, b):	
 	return list(set(a) - (set(a) - set(b)))
 
+def marinaFlagQueryGenerate(queryList, queryString, color, image, i):
+	queryString += "m" + str(i) + ": changeWaterColor(rgb: " + color + "),\n"
+	return queryString
+
+def soundQueryGenerate(sound, queryString, i):
+	queryString += "m" + str(i) + ": playSound(soundId: " + sound + ")\n"
+	return queryString
+
+def trainStationFlagQueryGenerate(queryList, queryString, color, image, i):
+	queryString += "m" + str(i) + ": createTrainStationFlags(input: "
+	stringified = "[{ rgb: " + color  + ", icon: " + image + " },]),\n"
+	queryString += stringified
+	return queryString
 
 def buildingQueryGenerate(queryList, queryString, color, image, i):
 	queryString += "m" + str(i) + ": updateBuildingColors(input: "
@@ -95,17 +123,27 @@ def buildingQueryGenerate(queryList, queryString, color, image, i):
 	for building_id in queryList:
 		temp = "{id: " + building_id + ", rgb: " + color + "},"
 		stringified += temp
-	stringified += "]) { id rgb },"
+	stringified += "]) { id rgb },\n"
 	queryString += stringified
 	return queryString
 
+def buildingFlagQueryGenerate(queryList, queryString, color, image, i):
+	queryString += "m" + str(i) + ": createBuildingFlags(input: "
+	stringified = "["
+	for building_id in queryList:
+		temp = "{id: " + building_id + ", rgb: " + color + ", icon: " + image + "},"
+		stringified += temp
+	stringified += "]) { id rgb icon },\n" 
+	queryString += stringified
+	return queryString
+	
 def oledQueryGenerate(queryList, queryString, color, image, i, mode):
 	queryString += "m" + str(i) + ": updateOleds(input: "
 	stringified = "["
 	for building_id in queryList:
 		temp = "{id: " + building_id + ", mode: " + mode + ", image: " + image + "}," 
 		stringified += temp
-	stringified += "]) {id mode image },"
+	stringified += "]) {id mode image },\n"
 	queryString += stringified
 	return queryString
 
@@ -116,12 +154,12 @@ def lightsQueryGenerate(queryList, queryString, color, image, i, mode):
                 temp = "{id: " + building_id+ ", mode: " + mode + "},"
                 stringified += temp
         stringified += "]"
-        queryString = queryString + stringified + ") { id mode }, "
+        queryString = queryString + stringified + ") { id mode }, \n"
         return queryString
 	
 
 def utilityPoleQueryGenerate(queryList, queryString, color, image, i):
-	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: PURPLE }){color},"
+	utilityString = "m" + str(i) + ": updateUtilityPole(input: { color: PURPLE }){color},\n"
 	return queryString + utilityString
 
 def windmillQueryGenerate(queryList, queryString, color, image, i, mode):
@@ -130,7 +168,7 @@ def windmillQueryGenerate(queryList, queryString, color, image, i, mode):
 	return queryString
 
 def windmillQueryFlagsGenerate(queryList, queryString, color, image, i):
-	windmillFlagString = "m" + str(i) + ": createWindmillFlags(input: [{ icon: " + image + ", rgb: " + color + "},]){ icon rgb }"
+	windmillFlagString = "m" + str(i) + ": createWindmillFlags(input: [{ icon: " + image + ", rgb: " + color + "},]){ icon rgb }\n"
 	return queryString + windmillFlagString
 	
 def towerQueryGenerate(queryList, queryString, color, image, i, mode):
@@ -141,7 +179,7 @@ def towerQueryGenerate(queryList, queryString, color, image, i, mode):
     		temp = "{id: " + building_id+ ", mode: " + mode + "},"
     		stringified += temp 
 	stringified += "]"
-        queryString = queryString + stringified + ") { id mode }, " 		
+        queryString = queryString + stringified + ") { id mode }, \n"
 	return queryString
  
 def colorRGB(color):
