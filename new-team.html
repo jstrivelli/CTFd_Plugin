@@ -4,6 +4,43 @@
 {% endblock %}
 
 {% block content %}
+<head>
+<style>
+#BLUE{
+background-color:blue;
+}
+#GREEN{
+  background-color: #2ecc71;
+}
+#BLUE{
+  background-color: #3498db;
+}
+#YELLOW{
+  background-color: #f1c40f;
+}
+#RED{
+  background-color: #e74c3c;
+}
+#AQUA{
+  background-color: #4cf1ff;
+}
+#GOLD{
+  background-color: #af8e09;
+}
+#TURQUOIS{
+  background-color: #1df9c3;
+}
+#PURPLE{
+  background-color: #ae36fd;
+}
+#PINK{
+  background-color: #f171e8;
+}
+#LIMEGREEN{
+  background-color: #4aff4e;
+}
+</style>
+</head>
 <div class="jumbotron">
 	<div class="container">
 		<h1>Teams</h1>
@@ -33,7 +70,7 @@
 						{% endif %}
 						</td>
 						
-						<td class="team-color" value="{{ smart_team.color }}"> {{ (smart_team).color }} </td>
+						<td class="team-color" value="{{ smart_team.color }}" id="{{ smart_team.color}}"> {{ (smart_team).color }} </td>
 						<td class="team-image" value="{{ smart_team.image }}"> {{ smart_team.image }} </td>
 						<td class="team-school" value="{{ smart_team.school }}"> {{ smart_team.school }} </td>
 						<td class="text-center" style="width: 10px;">

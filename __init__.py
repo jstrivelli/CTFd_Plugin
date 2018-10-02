@@ -321,8 +321,12 @@ def register_smart():
         if name_len:
             errors.append('Pick a longer team name')
 	if smart_color:
-	    if not Teams.query.filter_by(id=smart_color.teamId).first().admin:
-            	errors.append('Color unavailable. The following colors are available:  \n' + getAvailableColors())
+            smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.teamId).all()
+	    print(smart_result)
+	    print(smart_color.teamId)
+            print(Teams.query.filter_by(id=1).first())
+	    # if not Teams.query.filter_by(id=smart_color.teamId).first().admin:
+            errors.append('Color unavailable. The following colors are available:  \n' + getAvailableColors())
 	if smart_image:
             errors.append('That image is already taken')
 
@@ -669,7 +673,7 @@ def setup_custom():
             color = request.form['color']
             image = request.form['image']
 
-	    admin_smart = SmartCityTeam(admin.id, name, color, image, " ")
+	    admin_smart = SmartCityTeam(1, name, color, image, " ")
 
             # Index page
 
