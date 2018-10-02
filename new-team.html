@@ -25,6 +25,7 @@ background-color:blue;
   background-color: #4cf1ff;
 }
 #GOLD{
+  width: 100px;
   background-color: #af8e09;
 }
 #TURQUOIS{
@@ -39,6 +40,80 @@ background-color:blue;
 #LIMEGREEN{
   background-color: #4aff4e;
 }
+#HULK{
+	height: 100px;
+	width: 100px;
+	background-image:url("https://png.icons8.com/color/1600/hulk.png");
+	background-size: 100% 100%; 
+        background-repeat: no-repeat;
+}
+#CAPITAN_AMERICA{
+ 	height: 100px;
+        width: 100px;
+        background-image:url("http://icons.iconarchive.com/icons/hopstarter/superhero-avatar/256/Avengers-Captain-America-icon.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+#BLACK_PANTHER{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://orig00.deviantart.net/62ed/f/2017/273/7/a/black_panther_icon_by_helryu-dbg819l.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+
+}
+#SPIDERMAN{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://cdn4.iconfinder.com/data/icons/blast/127/spiderman-512.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+
+}
+#GOMORA{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://orig00.deviantart.net/40cc/f/2017/194/d/5/gamora_icon_by_helryu-dbg81cv.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+#DEADPOOL{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://png.icons8.com/color/1600/deadpool.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+#GROOT{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://png.icons8.com/color/1600/groot.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+#IRONMAN{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://cdn0.iconfinder.com/data/icons/superhero-2/256/Ironman-512.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+#ANGRY_WOLVERINE{
+	height: 100px;
+        width: 100px;
+	background-image:url("http://iconbug.com/download/size/512/icon/3934/angry-wolverine/");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+#THOR{
+	height: 100px;
+        width: 100px;
+	background-image:url("https://cdn1.iconfinder.com/data/icons/UltraBuuf/512/Thor.png");
+	background-size: 100% 100%;
+        background-repeat: no-repeat;
+}
+
+                   
 </style>
 </head>
 <div class="jumbotron">
@@ -71,7 +146,7 @@ background-color:blue;
 						</td>
 						
 						<td class="team-color" value="{{ smart_team.color }}" id="{{ smart_team.color}}"> {{ (smart_team).color }} </td>
-						<td class="team-image" value="{{ smart_team.image }}"> {{ smart_team.image }} </td>
+						<td class="team-image" value="{{ smart_team.image }}" id="{{ smart_team.image}}"> </td>
 						<td class="team-school" value="{{ smart_team.school }}"> {{ smart_team.school }} </td>
 						<td class="text-center" style="width: 10px;">
 							{% if team.website and (team.website.startswith('http://') or team.website.startswith('https://')) %}

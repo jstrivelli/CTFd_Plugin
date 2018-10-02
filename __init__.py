@@ -297,7 +297,7 @@ def register_smart():
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
 	smart_color = SmartCityTeam.query.filter_by(color=color).first()
-	smart_image = SmartCityTeam.query.add_columns('image').filter_by(image=image).first()
+	smart_image = SmartCityTeam.query.filter_by(image=image).first()
 	#challenge = SmartCityChallenge.query.filter_by(id=challenge.id).first()
 	pass_short = len(password) == 0
         pass_long = len(password) > 128
@@ -321,14 +321,11 @@ def register_smart():
         if name_len:
             errors.append('Pick a longer team name')
 	if smart_color:
-            smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.teamId).all()
-	    print(smart_result)
-	    print(smart_color.teamId)
-            print(Teams.query.filter_by(id=1).first())
-	    # if not Teams.query.filter_by(id=smart_color.teamId).first().admin:
-            errors.append('Color unavailable. The following colors are available:  \n' + getAvailableColors())
+	    if not Teams.query.filter_by(id=smart_color.teamId).first().admin:
+            	errors.append('Color unavailable. The following colors are available:  \n' + getAvailableColors())
 	if smart_image:
-            errors.append('That image is already taken')
+	    if not Teams.query.filter_by(id=smart_image.teamId).first().admin:
+            	errors.append('That image is already taken')
 
         if len(errors) > 0:
             return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
