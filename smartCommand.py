@@ -226,7 +226,7 @@ def chalSolved(idList):
 	i += 1
 	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY", i, "OFF")
 	i += 1
-	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY", i):
+	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY", i)
 	queryString += "}"
 	return queryString
 	
