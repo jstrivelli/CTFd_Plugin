@@ -40,6 +40,7 @@ class SmartTable():
 
 
 def createSmartCityTableSession2(session):
+	print(tableReset())
 	queryString = """mutation{
 		
 	"""
@@ -106,7 +107,8 @@ def createSmartCityTableSession2(session):
 	
 	print("Reset Request Sent")
 
-	queryString = tableReset()
+	queryString = chalSolved(IdList)
+	#queryString = tableReset()
 	json = {'query': queryString}
 	request = requests.post(API_URL, json=json)
 	
@@ -198,7 +200,36 @@ def towerQueryGenerate(queryList, queryString, color, image, i, mode):
 	stringified += "]"
         queryString = queryString + stringified + ") { id mode }, \n"
 	return queryString
- 
+
+
+def chalSolved(idList):
+	queryString = """mutation{
+
+	"""
+	color = "\"255,255,255,\""
+	i = 1
+
+	queryList = similarList(idList, buildingList)
+	if queryList:
+		queryString = buildingQueryGenerate(queryList, queryString, color, "MURRAY", i)
+ 		i += 1
+
+	queryList = similarList(idList, oledList)
+	if queryList:
+		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY", i)
+		i += 1
+	queryString = towerQueryGenerate(towerList, queryString, color, "MURRAY", i, "OFF")
+	i += 1
+	queryString = windmillQueryGenerate(["WINDMILL"], queryString, color, "MURRAY", i, "OFF", "OFF")
+	i += 1
+	queryString = utilityPoleQueryGenerate(["UTILITY_POLE"], queryString, "RED", "MURRAY", i)
+	i += 1
+	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY", i, "OFF")
+	i += 1
+	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY", i):
+	queryString += "}"
+	return queryString
+	
 def tableReset():
 	query = """mutation{
 
