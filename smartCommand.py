@@ -3,7 +3,7 @@ import time
 from subprocess import STDOUT, check_output
 
 #output = check_output(cmd, stderr=STDOUT, timeout=seconds)
-API_URL = 'http://192.168.35.35:9080/api'
+API_URL = 'http://192.168.2.25:9080/api'
 
 oledList = ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]
 lightsList = ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]
