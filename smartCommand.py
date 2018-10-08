@@ -3,7 +3,7 @@ import time
 from subprocess import STDOUT, check_output
 
 #output = check_output(cmd, stderr=STDOUT, timeout=seconds)
-API_URL = 'http://192.168.35.35:9080/api'
+API_URL = 'http://192.168.2.25:9080/api'
 
 oledList = ["OLED_1", "OLED_2", "OLED_3", "OLED_4", "OLED_5", "OLED_6", "OLED_7", "OLED_8", "OLED_9"]
 lightsList = ["MARINA", "STREET_LIGHT", "TRAIN_STATION"]
@@ -40,7 +40,7 @@ class SmartTable():
 
 
 def createSmartCityTableSession2(session):
-	print(tableReset())
+	#print(tableReset())
 	queryString = """mutation{
 		
 	"""
@@ -92,7 +92,7 @@ def createSmartCityTableSession2(session):
 	print(queryString)
 	json = {'query': queryString}
 	
-	time.sleep(10)
+	time.sleep(3)
 	print("First Request Sent")
 	request = requests.post(API_URL, json=json)
 
@@ -107,7 +107,9 @@ def createSmartCityTableSession2(session):
 	
 	print("Reset Request Sent")
 
-	queryString = chalSolved(IdList)
+	queryString = chalSolved(idList)
+
+	print(queryString)
 	#queryString = tableReset()
 	json = {'query': queryString}
 	request = requests.post(API_URL, json=json)
@@ -206,27 +208,27 @@ def chalSolved(idList):
 	queryString = """mutation{
 
 	"""
-	color = "\"255,255,255,\""
+	color = "\"255,255,255\""
 	i = 1
 
 	queryList = similarList(idList, buildingList)
 	if queryList:
-		queryString = buildingQueryGenerate(queryList, queryString, color, "MURRAY", i)
+		queryString = buildingQueryGenerate(queryList, queryString, color, "MURRAY_1", i)
  		i += 1
 
 	queryList = similarList(idList, oledList)
 	if queryList:
-		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY", i)
+		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY_1", i, "ON")
 		i += 1
-	queryString = towerQueryGenerate(towerList, queryString, color, "MURRAY", i, "OFF")
+	queryString = towerQueryGenerate(towerList, queryString, color, "MURRAY_1", i, "OFF")
 	i += 1
-	queryString = windmillQueryGenerate(["WINDMILL"], queryString, color, "MURRAY", i, "OFF", "OFF")
+	queryString = windmillQueryGenerate(["WINDMILL"], queryString, color, "MURRAY_1", i, "OFF", "OFF")
 	i += 1
-	queryString = utilityPoleQueryGenerate(["UTILITY_POLE"], queryString, "RED", "MURRAY", i)
+	queryString = utilityPoleQueryGenerate(["UTILITY_POLE"], queryString, "RED", "MURRAY_1", i)
 	i += 1
-	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY", i, "OFF")
+	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY_1", i, "OFF")
 	i += 1
-	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY", i)
+	queryString = marinaFlagQueryGenerate(idList, queryString, "\"255,255,255\"", "MURRAY_1", i)
 	queryString += "}"
 	return queryString
 	
