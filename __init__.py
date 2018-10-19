@@ -38,8 +38,7 @@ q = FIFOSQLiteQueue(path="./db", multithreading=True)
 def worker():
     while True:
         session = q.get()
-        createSmartCitySession2(session)
-
+        createSmartCityTableSession2(session)
 
 t = Thread(target=worker)
 t.daemon = True
