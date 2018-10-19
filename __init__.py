@@ -16,6 +16,9 @@ from CTFd.utils.decorators import authed_only, during_ctf_time_only, viewable_wi
 from CTFd.plugins.challenges import get_chal_class
 from werkzeug.routing import Rule
 from .smartCommand import SmartTable, createSmartCityTableSession2
+from persistqueue import FIFOSQLiteQueue
+from threading import Thread
+
 
 admin_teams = Blueprint('admin_teams', __name__)
 auth = Blueprint('auth', __name__)
@@ -26,6 +29,24 @@ logger = getLogger(__name__)
 teamColors = ['GREEN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
 teamImages = ['HULK', 'CAPITAN_AMERICA', 'BLACK_PANTHER', 'SPIDERMAN', 'GOMORA', 'DEADPOOL', 'GROOT', 'IRONMAN', 'ANGRY_WOLVERINE', 'THOR']
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
+
+
+#This is what seperates our platform from the smart city processing due to some delays between the two
+#-------------------------------------------------------------------------------------------------------
+q = FIFOSQLiteQueue(path="./db", multithreading=True)
+
+def worker():
+    while True:
+        session = q.get()
+        createSmartCitySession2(session)
+
+
+t = Thread(target=worker)
+t.daemon = True
+t.start()
+
+#--------------------------------------------------------------------------------------------------------
+
 
 class SmartCityTeam(db.Model):
 	_mapper_args__ = {'polymorphic_identity': 'smart_city'}
@@ -292,7 +313,7 @@ def register_smart():
 	if not color in teamColors:
 		color = "RED"
 	if not image  in teamImages:
-		image = "HULK"
+		image = "BATMAN"
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
         emails = Teams.query.add_columns('email', 'id').filter_by(email=email).first()
@@ -438,8 +459,8 @@ def chal_custom(chalid):
 			b[0] = b[0][2:]
 			b[-1] = b[-1][:-2]
                         print("Team with color " + str(smart_color) + " and image " + str(smart_image) + " solved challenege with buildingId " + str(b) + "and sound " + smart_soundId)
-                        smartSession = SmartTable(b, smart_color, smart_image, smart_soundId)
-                        createSmartCityTableSession2(smartSession)
+			#Initialize the session to the smart city table in a sepreate thread that is always running
+                        q.put(SmartTable(b, smart_color, smart_image, smart_soundId))
 
 
                 return jsonify({'status': 1, 'message': message})
@@ -472,14 +493,14 @@ def chal_custom(chalid):
 
 
 def getAvailableColors():
-	teamColorList = ['GRREN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
+	#Generate a color wheel to the front end similar to the team info page
+	teamColorList = ['GREEN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
 	smart_result = SmartCityTeam.query.with_entities(SmartCityTeam.color).all()
 	colorsPickedList = []
 	for colorElement in smart_result:
 		colorsPickedList.append(colorElement.color)        
 	print(str(colorsPickedList))
-	availColorList = set(teamColorList) - set(colorsPickedList)
-	
+	availColorList = set(teamColorList) - set(colorsPickedList)	
 	return str(list(availColorList))
 
 @staticmethod
@@ -500,7 +521,7 @@ def admin_create_team_custom():
     if not color in teamColors:
 	color = "RED"
     if not image in teamImages:
-	image = "HULK"
+	image = "BATMAN"
 
     admin_user = True if request.form.get('admin', None) == 'on' else False
     verified = True if request.form.get('verified', None) == 'on' else False

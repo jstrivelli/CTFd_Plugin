@@ -40,7 +40,6 @@ class SmartTable():
 
 
 def createSmartCityTableSession2(session):
-	print(tableReset())
 	queryString = """mutation{
 		
 	"""
