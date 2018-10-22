@@ -85,8 +85,9 @@ def createSmartCityTableSession2(session):
 		queryString = buildingFlagQueryGenerate(queryList, queryString, color, image, i)
 		i += 1
 	if sound:
-		queryString = soundQueryGenerate(sound, queryString, i)
-		i += 1
+		if not sound == "NO_SOUND":
+			queryString = soundQueryGenerate(sound, queryString, i)
+			i += 1
 	queryString = queryString + "}"		
 	print(queryString)
 	json = {'query': queryString}

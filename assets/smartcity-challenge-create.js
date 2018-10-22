@@ -23,6 +23,14 @@ $(document).ready(function(){
 });
 
 var soundArr = [
+{val : 'NO_SOUND', text: 'NO_SOUND'},
+{val : 'STEAM_TRAIN_HORN', text: 'STEAM_TRAIN_HORN'},
+{val : 'COURT_HOUSE', text: 'COURT_HOUSE'},
+{val : 'CASH_REGISTER', text: 'CASH_REGISTER'},
+{val : 'DOG_BARK', text: 'DOG_BARK'},
+{val : 'PHONE_RINGING', text: 'PHONE_RINGING'},
+{val : 'CHALKBOARD', text: 'CHALKBOARD'},
+{val : 'SCHOOL_BELL', text: 'SCHOOL_BELL'},
 {val : 'APPLAUSE', text: 'APPLAUSE'},
 {val : 'BABY_CRYING', text: 'BABY_CRYING'},
 {val : 'BEACH', text: 'BEACH'},
