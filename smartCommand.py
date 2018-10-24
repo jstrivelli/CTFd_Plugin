@@ -216,7 +216,7 @@ def chalSolved(idList):
 
 	queryList = similarList(idList, oledList)
 	if queryList:
-		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY", i)
+		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY", i, "ON")
 		i += 1
 	queryString = towerQueryGenerate(towerList, queryString, color, "MURRAY", i, "OFF")
 	i += 1
