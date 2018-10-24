@@ -58,7 +58,7 @@ var soundArr = [
 {val : 'LAWNMOWER', text: 'LAWNMOWER'},
 {val : 'MOO', text: 'MOO'},
 {val : 'OMNINOUS_MUSIC', text: 'OMNINOUS_MUSIC'},
-{val : 'OVERTIMER', text: 'OVERTIMER'},
+{val : 'OVEN_TIMER', text: 'OVEN_TIMER'},
 {val : 'POWER_DRILL', text: 'POWER_DRILL'},
 {val : 'ROOSTER', text: 'ROOSTER'},
 {val : 'RUSTLING_LEAVES', text: 'RUSTLING_LEAVES'},

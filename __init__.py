@@ -27,14 +27,13 @@ views = Blueprint('views', __name__)
 basicConfig(level=ERROR)
 logger = getLogger(__name__)
 teamColors = ['GREEN','BLUE', 'YELLOW','RED','AQUA', 'PURPLE', 'GOLD','TURQUOIS', 'PINK', 'LIMEGREEN']
-teamImages = ['HULK', 'CAPITAN_AMERICA', 'BLACK_PANTHER', 'SPIDERMAN', 'GOMORA', 'DEADPOOL', 'GROOT', 'IRONMAN', 'ANGRY_WOLVERINE', 'THOR']
+teamImages = ['FLASH', 'BATMAN', 'SUPERMAN', 'CATWOMAN', 'WONDERWOMAN', 'ROBIN', 'GREEN_LANTERN', 'AQUAMAN', 'GREEN_ARROW', 'MERA']
 #app.url_map(Rule('/register', endpoint='register.colors', methods=['GET', 'POST']))
 
 
 #This is what seperates our platform from the smart city processing due to some delays between the two
-#-------------------------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------------------------=
 q = FIFOSQLiteQueue(path="./db", multithreading=True)
-
 def worker():
     while True:
         session = q.get()

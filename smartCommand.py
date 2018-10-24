@@ -92,7 +92,7 @@ def createSmartCityTableSession2(session):
 	print(queryString)
 	json = {'query': queryString}
 	
-	time.sleep(10)
+	time.sleep(7)
 	print("First Request Sent")
 	request = requests.post(API_URL, json=json)
 
@@ -103,11 +103,11 @@ def createSmartCityTableSession2(session):
     		raise Exception(request.status_code)
 	
 
-	time.sleep(25)
+	time.sleep(15)
 	
 	print("Reset Request Sent")
 
-	queryString = chalSolved(IdList)
+	queryString = chalSolved(idList)
 	#queryString = tableReset()
 	json = {'query': queryString}
 	request = requests.post(API_URL, json=json)

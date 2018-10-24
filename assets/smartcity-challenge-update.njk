@@ -73,11 +73,18 @@
 						<input type="number" class="form-control chal-value" name="value" placeholder="Enter value"
 							   value="{{ value }}" required>
 					</div>
-
 					<div class="form-group">
-						<div class="smart">
-						<label for="value">Building ID </label>
+						<label for="building">Building ID
+							<i class="far fa-question-circle text-muted cursor-help" data-toggle="tooltip" data-placement="right" title="This is how many points are rewarded for taking control of the hill."></i>
+						</label>
+						HELLLLOOOOOO
+					</div>
+					<div class="form-group input-group">
+						<div class=smart>
+							<span class="input-group-btn"><button type="button" class="btn btn-default btn-add">+
+							</button></span>					
 						</div>
+					</div>	
 					<div class="checkbox">
 						<label>
 							<input class="chal-attempts-checkbox" id="limit_max_attempts" name="limit_max_attempts"
@@ -104,7 +111,7 @@
 
 					<input type="hidden" value="{{ nonce }}" name="nonce" id="nonce">
 					<div style="text-align:center">
-						<button class="btn btn-success btn-outlined update-challenge-submit" type="submit">Update
+						<button class="btn btn-success btn-outlined update-challenge-submit" type="submit">Updateeee
 						</button>
 					</div>
 				</form>
