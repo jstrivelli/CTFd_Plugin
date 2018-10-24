@@ -211,22 +211,22 @@ def chalSolved(idList):
 
 	queryList = similarList(idList, buildingList)
 	if queryList:
-		queryString = buildingQueryGenerate(queryList, queryString, color, "MURRAY", i)
+		queryString = buildingQueryGenerate(queryList, queryString, color, "MURRAY_1", i)
  		i += 1
 
 	queryList = similarList(idList, oledList)
 	if queryList:
-		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY", i, "ON")
+		queryString = oledQueryGenerate(queryList, queryString, color, "MURRAY_1", i, "ON")
 		i += 1
-	queryString = towerQueryGenerate(towerList, queryString, color, "MURRAY", i, "OFF")
+	queryString = towerQueryGenerate(towerList, queryString, color, "MURRAY_1", i, "OFF")
 	i += 1
-	queryString = windmillQueryGenerate(["WINDMILL"], queryString, color, "MURRAY", i, "OFF", "OFF")
+	queryString = windmillQueryGenerate(["WINDMILL"], queryString, color, "MURRAY_1", i, "OFF", "OFF")
 	i += 1
-	queryString = utilityPoleQueryGenerate(["UTILITY_POLE"], queryString, "RED", "MURRAY", i)
+	queryString = utilityPoleQueryGenerate(["UTILITY_POLE"], queryString, "RED", "MURRAY_1", i)
 	i += 1
-	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY", i, "OFF")
+	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY_1", i, "OFF")
 	i += 1
-	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY", i)
+	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY_1", i)
 	queryString += "}"
 	return queryString
 	
