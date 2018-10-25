@@ -132,7 +132,7 @@ def soundQueryGenerate(sound, queryString, i):
 
 def trainStationFlagQueryGenerate(queryList, queryString, color, image, i):
 	queryString += "m" + str(i) + ": createTrainStationFlags(input: "
-	stringified = "[{ rgb: " + color  + ", icon: " + image + " },]),\n"
+	stringified = "[{ rgb: " + color  + ", icon: " + image + " },]) { icon },\n"
 	queryString += stringified
 	return queryString
 
@@ -206,7 +206,7 @@ def chalSolved(idList):
 	queryString = """mutation{
 
 	"""
-	color = "\"255,255,255,\""
+	color = "\"255,255,255\""
 	i = 1
 
 	queryList = similarList(idList, buildingList)
