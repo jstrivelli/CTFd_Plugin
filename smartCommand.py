@@ -94,7 +94,11 @@ def createSmartCityTableSession2(session):
 	
 	time.sleep(7)
 	print("First Request Sent")
-	request = requests.post(API_URL, json=json)
+	#request = requests.post(API_URL, json=json)
+	#usage with auth token added token 
+	api_token = ''
+	headers = {'Authorization': 'token %s' % api_token}
+	request = requests.post(API_URL, json=json, headers=headers)
 
 	if request.status_code == 200:
     		response = request.json()
@@ -110,7 +114,11 @@ def createSmartCityTableSession2(session):
 	queryString = chalSolved(idList)
 	#queryString = tableReset()
 	json = {'query': queryString}
-	request = requests.post(API_URL, json=json)
+	#request = requests.post(API_URL, json=json)
+	#usage with auth token Added token
+	api_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1NDA0Nzg1MjZ9.-WrQXOTkQJZmn41sye76RlpdhpV0_3ChPWrNUAlGzMk'
+	headers = {'Authorization': 'token %s' % api_token}
+	request = requests.post(API_URL, json=json, headers=headers)
 	
 	if request.status_code == 200:
 		response = request.json()
@@ -226,7 +234,7 @@ def chalSolved(idList):
 	i += 1
 	queryString = lightsQueryGenerate(lightsList, queryString, color, "MURRAY_1", i, "OFF")
 	i += 1
-	queryString = marinaFlagQueryGenerate(idList, queryString, "\"0,0,0\"", "MURRAY_1", i)
+	queryString = marinaFlagQueryGenerate(idList, queryString, "\"255,255,255\"", "MURRAY_1", i)
 	queryString += "}"
 	return queryString
 	
